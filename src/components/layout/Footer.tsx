@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-10 sm:px-10">
         <div className="flex flex-col gap-6 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-xs tracking-wide text-muted-2">
-            © {new Date().getFullYear()} {site.name}. Built with Next.js &amp; Motion.
+            © {new Date().getFullYear()} {site.name}. Built with Next.js, Motion &amp; GSAP.
           </p>
 
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
@@ -18,7 +18,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer noopener"
                   data-cursor="link"
-                  className="font-mono text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-accent-2"
+                  className="link-underline font-mono text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-accent-2"
                 >
                   {link.label}
                 </a>
@@ -29,7 +29,7 @@ export default function Footer() {
           <a
             href="#top"
             data-cursor="link"
-            className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-foreground"
+            className="link-underline flex w-fit items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-foreground"
           >
             Back to top <ArrowUp className="h-3.5 w-3.5" />
           </a>

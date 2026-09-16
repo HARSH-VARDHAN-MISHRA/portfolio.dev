@@ -8,6 +8,9 @@ import MagneticButton from "@/components/ui/MagneticButton";
 import GradientAurora from "@/components/ui/GradientAurora";
 import ParticleField from "@/components/ui/ParticleField";
 import HeroPortrait from "@/components/ui/HeroPortrait";
+import TypewriterText from "@/components/ui/TypewriterText";
+
+const BUILDS = ["CRM Platforms", "ERP Systems", "Shopify Stores", "WhatsApp Automation", "AI Workflows"] as const;
 
 export default function Hero() {
   const { scrollY } = useScroll();
@@ -54,11 +57,21 @@ export default function Hero() {
             </span>
           </h1>
 
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.75 }}
+            className="mt-6 flex items-center gap-2 font-mono text-sm text-accent-2 sm:text-base"
+          >
+            <span className="text-muted-2">Currently building</span>
+            <TypewriterText words={BUILDS} />
+          </motion.div>
+
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.9 }}
-            className="mt-8 max-w-lg text-balance text-base leading-relaxed text-muted sm:text-lg"
+            className="mt-6 max-w-lg text-balance text-base leading-relaxed text-muted sm:text-lg"
           >
             {site.description}
           </motion.p>

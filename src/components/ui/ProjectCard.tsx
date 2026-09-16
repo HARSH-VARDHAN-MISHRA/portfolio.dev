@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { Lock } from "lucide-react";
 import type { Project } from "@/data/projects";
+import DistortImage from "@/components/ui/DistortImage";
 
 /**
  * The little red/yellow/green window controls used on every preview tile
@@ -59,13 +60,24 @@ export default function ProjectCard({
         style={{ aspectRatio: isFeatured ? "16 / 11" : "16 / 12" }}
       >
         {project.image ? (
-          <Image
-            src={project.image}
-            alt={`${project.title} website preview`}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          />
+          <>
+            {/* Plain optimized image — the real content, and the fallback
+                whenever WebGL is unavailable or reduced-motion is set. */}
+            <Image
+              src={project.image}
+              alt={`${project.title} website preview`}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            />
+            {/* Same image, re-fetched at the same optimized size, drawn into
+                a WebGL canvas on top — invisible until it draws, so it
+                degrades to the plain image above with zero extra markup. */}
+            <DistortImage
+              src={`/_next/image?url=${encodeURIComponent(project.image)}&w=828&q=75`}
+              className="absolute inset-0 h-full w-full"
+            />
+          </>
         ) : (
           <div
             className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03]"

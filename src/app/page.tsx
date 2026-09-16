@@ -4,6 +4,7 @@ import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Specialties from "@/components/sections/Specialties";
 import TechOrbit from "@/components/sections/TechOrbit";
+import CaseStudies from "@/components/sections/CaseStudies";
 import Work from "@/components/sections/Work";
 import Skills from "@/components/sections/Skills";
 import Experience from "@/components/sections/Experience";
@@ -20,6 +21,7 @@ export default function Home() {
         <About />
         <Specialties />
         <TechOrbit />
+        <CaseStudies />
         <Work />
         <Skills />
         <Experience />

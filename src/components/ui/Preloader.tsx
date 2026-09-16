@@ -1,72 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { site } from "@/data/site";
 
-const NAME = site.name;
+gsap.registerPlugin(useGSAP);
 
 /**
- * A one-time intro screen: the name holds, then dissolves character-by-
- * character into "vapour" (blur + drift + fade, staggered) before the real
- * page underneath is revealed. Skips straight to done for
- * prefers-reduced-motion, and never blocks first paint of the page itself —
- * it's an overlay, not a gate on rendering.
+ * A straightforward loading screen: a counting percentage, a filling bar,
+ * then a single curtain wipes up to reveal the page. No hidden meaning to
+ * decode — it's clear what's happening and when it's done.
  */
 export default function Preloader() {
-  const [phase, setPhase] = useState<"hold" | "vapour" | "done">("hold");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const [done, setDone] = useState(false);
+
+  useGSAP(
+    () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        gsap.delayedCall(0, () => setDone(true));
+        return;
+      }
+
+      const counter = { value: 0 };
+      gsap.timeline({
+        defaults: { ease: "power2.out" },
+        onComplete: () => {
+          gsap.to(containerRef.current, {
+            yPercent: -100,
+            duration: 0.9,
+            ease: "power4.inOut",
+            delay: 0.2,
+            onComplete: () => setDone(true),
+          });
+        },
+      }).to(counter, {
+        value: 100,
+        duration: 1.8,
+        onUpdate: () => {
+          const v = Math.round(counter.value);
+          if (counterRef.current) counterRef.current.textContent = String(v);
+          if (barRef.current) barRef.current.style.width = `${v}%`;
+        },
+      });
+    },
+    { scope: containerRef }
+  );
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const id = setTimeout(() => setPhase("done"), 0);
-      return () => clearTimeout(id);
-    }
-    const toVapour = setTimeout(() => setPhase("vapour"), 700);
-    const toDone = setTimeout(() => setPhase("done"), 700 + 1100);
-    return () => {
-      clearTimeout(toVapour);
-      clearTimeout(toDone);
-    };
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = phase === "done" ? "" : "hidden";
+    document.body.style.overflow = done ? "" : "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [phase]);
+  }, [done]);
+
+  if (done) return null;
 
   return (
-    <AnimatePresence>
-      {phase !== "done" && (
-        <motion.div
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-background"
-        >
-          <h1 className="font-display text-[clamp(1.8rem,6vw,4rem)] font-medium tracking-tight text-foreground">
-            {NAME.split("").map((char, i) => (
-              <motion.span
-                key={i}
-                className="inline-block"
-                animate={
-                  phase === "vapour"
-                    ? {
-                        opacity: 0,
-                        y: -28 - Math.abs(Math.sin(i * 1.7)) * 20,
-                        x: Math.sin(i * 2.3) * 14,
-                        filter: "blur(10px)",
-                      }
-                    : { opacity: 1, y: 0, x: 0, filter: "blur(0px)" }
-                }
-                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: i * 0.025 }}
-              >
-                {char === " " ? " " : char}
-              </motion.span>
-            ))}
-          </h1>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background"
+    >
+      <div className="flex items-start font-display text-foreground">
+        <span ref={counterRef} className="text-[clamp(3.5rem,14vw,8rem)] font-medium leading-none tabular-nums">
+          0
+        </span>
+        <span className="mt-2 text-xl text-muted sm:mt-3 sm:text-2xl">%</span>
+      </div>
+      <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-muted-2">{site.name}</p>
+      <div className="mt-8 h-px w-40 overflow-hidden bg-border">
+        <div ref={barRef} className="h-full bg-gradient-to-r from-accent to-accent-2" style={{ width: "0%" }} />
+      </div>
+    </div>
   );
 }

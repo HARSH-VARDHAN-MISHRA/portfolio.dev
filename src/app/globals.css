@@ -155,3 +155,17 @@ body {
     linear-gradient(to bottom, color-mix(in srgb, var(--color-foreground) 5%, transparent) 1px, transparent 1px);
   background-size: 64px 64px;
 }
+
+/* Utility: a text link whose underline grows from the left on hover,
+   rather than just appearing — used for plain inline text links. */
+.link-underline {
+  position: relative;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 0.3s var(--ease-out-soft);
+}
+.link-underline:hover {
+  background-size: 100% 1px;
+}

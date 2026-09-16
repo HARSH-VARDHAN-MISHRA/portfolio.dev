@@ -1,6 +1,6 @@
 import { site } from "@/data/site";
 import SectionLabel from "@/components/ui/SectionLabel";
-import RevealText from "@/components/ui/RevealText";
+import GsapMaskReveal from "@/components/ui/GsapMaskReveal";
 
 const facts = [
   { label: "Based in", value: site.location },
@@ -14,21 +14,22 @@ export default function About() {
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <SectionLabel index="01" label="About" />
 
-        <h2 className="mt-10 max-w-4xl font-display text-[clamp(2.1rem,6vw,4.25rem)] font-medium leading-[1.12] tracking-tight text-foreground">
-          <RevealText text="I started by building" className="text-muted" />
+        <GsapMaskReveal
+          as="h2"
+          className="mt-10 max-w-4xl font-display text-[clamp(2.1rem,6vw,4.25rem)] font-medium leading-[1.12] tracking-tight text-foreground"
+        >
+          <span className="text-muted">I started by building</span>
           <br />
-          <RevealText text="small-business websites." delay={0.08} className="text-muted" />
+          <span className="text-muted">small-business websites.</span>
           <br />
-          <RevealText text="Three years later, I own the" delay={0.2} />
+          Three years later, I own the
           <br />
-          <span className="text-gradient">
-            <RevealText text="frontend of enterprise CRM & ERP" delay={0.32} />
-          </span>
+          <span className="text-gradient">frontend of enterprise CRM &amp; ERP</span>
           <br />
-          <RevealText text="platforms — and I'm back in school" delay={0.44} />
+          platforms — and I&rsquo;m back in school
           <br />
-          <RevealText text="for my Master's." delay={0.56} />
-        </h2>
+          for my Master&rsquo;s.
+        </GsapMaskReveal>
 
         <dl className="mt-16 grid grid-cols-1 gap-8 border-t border-border pt-10 sm:grid-cols-3">
           {facts.map((fact) => (
