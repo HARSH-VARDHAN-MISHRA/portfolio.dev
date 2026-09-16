@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Third-party skill scripts (installed by the UI/UX Pro Max CLI), not app source.
+    ".claude/**",
   ]),
 ]);
 

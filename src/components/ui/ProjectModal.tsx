@@ -1,0 +1,151 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { motion } from "motion/react";
+import { ExternalLink, Lock } from "lucide-react";
+import type { Project } from "@/data/projects";
+import { TrafficLights } from "@/components/ui/ProjectCard";
+
+// A springy, overshoot-then-settle curve — the closest a plain scale/opacity
+// tween gets to a "genie" open without a shared-element FLIP (that, combined
+// with AnimatePresence's exit-removal, proved unreliable in testing).
+const genieOpen = { duration: 0.45, ease: [0.34, 1.35, 0.64, 1] as const };
+const genieClose = { duration: 0.2, ease: "easeIn" as const };
+const CLOSE_MS = 220; // slightly longer than genieClose, so the fade is never cut off
+
+export default function ProjectModal({
+  project,
+  onClose,
+}: {
+  project: Project;
+  onClose: () => void;
+}) {
+  // Starts true so Motion's initial→animate transition plays the "open"
+  // animation on mount by itself — no effect-driven state kickoff needed.
+  const [visible, setVisible] = useState(true);
+
+  const requestClose = () => {
+    setVisible(false);
+    // A plain timer (not onAnimationComplete) actually unmounts this modal —
+    // reliable regardless of animation-callback timing.
+    setTimeout(onClose, CLOSE_MS);
+  };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && requestClose();
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label={project.title}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: visible ? 1 : 0 }}
+      transition={visible ? { duration: 0.25 } : genieClose}
+      onClick={requestClose}
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md sm:p-10"
+    >
+      <motion.div
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.85, y: 16 }}
+        animate={
+          visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.9, y: 8 }
+        }
+        transition={visible ? genieOpen : genieClose}
+        className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-border-strong bg-surface shadow-2xl"
+      >
+        <div className="relative w-full overflow-hidden" style={{ aspectRatio: project.image ? "16 / 10" : "16 / 9" }}>
+          {project.image ? (
+            <Image
+              src={project.image}
+              alt={`${project.title} website preview`}
+              fill
+              sizes="640px"
+              className="object-cover object-top"
+            />
+          ) : (
+            <>
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundColor: project.gradient[0],
+                  backgroundImage: `radial-gradient(circle at 30% 20%, ${project.gradient[1]}55, transparent 60%), linear-gradient(135deg, ${project.gradient[0]}, color-mix(in srgb, var(--color-background) 85%, transparent) 85%)`,
+                }}
+              />
+              <div className="absolute inset-0 bg-grid opacity-30" />
+            </>
+          )}
+
+          <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-white/10 bg-black/30 px-4 py-2.5 backdrop-blur-sm">
+            <TrafficLights onClose={requestClose} />
+            <span className="truncate pl-3 font-mono text-[11px] text-white/80">{project.title}</span>
+          </div>
+
+          {project.href === undefined && (
+            <div className="absolute right-4 top-14 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white/90 backdrop-blur-sm">
+              <Lock className="h-4 w-4" strokeWidth={2} />
+            </div>
+          )}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 10 }}
+          transition={{ duration: 0.4, delay: visible ? 0.15 : 0, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col gap-4 p-6 sm:p-8"
+        >
+          <div>
+            <h3 className="font-display text-2xl font-medium text-foreground sm:text-3xl">
+              {project.title}
+            </h3>
+            <p className="mt-1 font-mono text-xs uppercase tracking-[0.15em] text-muted">
+              {project.category} — {project.period}
+            </p>
+          </div>
+
+          <p className="text-sm leading-relaxed text-muted">{project.description}</p>
+
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {project.href ? (
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                data-cursor="link"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border-strong px-4 py-2 text-sm text-foreground transition-colors hover:border-accent-soft/60 hover:text-accent-soft"
+              >
+                {project.linkLabel ?? "View project"}
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-2">
+                <Lock className="h-3.5 w-3.5" />
+                {project.linkLabel}
+              </span>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}

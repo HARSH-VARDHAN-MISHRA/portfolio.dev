@@ -1,1 +1,157 @@
 @import "tailwindcss";
+
+@theme {
+  /* Color system — deep cinematic near-black with a violet/cyan signal pair */
+  --color-background: #08080b;
+  --color-surface: #101014;
+  --color-surface-2: #17171d;
+  --color-border: #24242c;
+  --color-border-strong: #34343f;
+  --color-foreground: #f3f3f6;
+  --color-muted: #9a9aa8;
+  --color-muted-2: #63636f;
+  --color-accent: #6d5ef9;
+  --color-accent-soft: #8c7dff;
+  --color-accent-2: #22d3ee;
+  --color-warn: #f5b942;
+
+  /* Type system */
+  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+
+  /* Motion easing tokens */
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-grain: grain 8s steps(10) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+}
+
+/* Light theme — an Apple-esque clean white alternative to the default
+   cinematic dark. Same token names, different values, so every component
+   built against bg-background/text-foreground/etc. just adapts. */
+:root[data-theme="light"] {
+  --color-background: #ffffff;
+  --color-surface: #f5f5f7;
+  --color-surface-2: #ececef;
+  --color-border: #e2e2e6;
+  --color-border-strong: #d0d0d6;
+  --color-foreground: #1d1d1f;
+  --color-muted: #6e6e73;
+  --color-muted-2: #86868b;
+  --color-accent: #5646d6;
+  --color-accent-soft: #4f46e5;
+  --color-accent-2: #0891b2;
+  --color-warn: #b45309;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-1%, -3%); }
+  20% { transform: translate(-4%, 2%); }
+  30% { transform: translate(2%, -6%); }
+  40% { transform: translate(-2%, 4%); }
+  50% { transform: translate(-4%, 2%); }
+  60% { transform: translate(4%, 0%); }
+  70% { transform: translate(0%, 6%); }
+  80% { transform: translate(-2%, -2%); }
+  90% { transform: translate(3%, 3%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+
+html {
+  background: var(--color-background);
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Aurora glows are a dark-theme device — "screen" blend against white
+   paints nothing useful, so fade them out for the light theme instead
+   of fighting the blend mode. */
+[data-theme="light"] [data-aurora] {
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+/* Slim, quiet scrollbar that still fits the cinematic surface */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--color-background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utility: gradient text for headline emphasis.
+   inline-block keeps this a single fragment so background-clip:text
+   still covers the whole phrase correctly if it happens to wrap. */
+.text-gradient {
+  display: inline-block;
+  background: linear-gradient(120deg, var(--color-accent-soft), var(--color-accent-2));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Utility: fine 1px grid lines used behind hero content */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-foreground) 5%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
