@@ -14,6 +14,7 @@ gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 const facts = [
   { label: "Based in", value: site.location },
   { label: "Currently", value: "Frontend Developer @ Partsklik LLP" },
+  { label: "Previously", value: "35+ sites shipped @ DigiIndia Solutions" },
   { label: "Studying", value: `${site.education.current.degree}, ${site.education.current.school}` },
 ];
 
@@ -28,17 +29,26 @@ export default function About() {
       const mm = gsap.matchMedia();
 
       /**
-       * Everything here — the line mask-in and the word-by-word color scrub —
+       * Everything here — the line mask-in and the line-by-line color scrub —
        * only ever runs when motion is allowed. Under reduced motion this
        * `mm.add` block simply never executes, so the heading is left exactly
        * as authored: full-opacity, full-color, no split markup, no JS-driven
        * state to get stuck mid-transition.
        */
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const split = new SplitText(headingRef.current, { type: "lines, words", mask: "lines" });
-        const scrubWords = split.words.filter((word) => !word.closest(".text-gradient"));
+        if (!headingRef.current) return;
 
-        gsap.from(split.lines, {
+        // A SECOND SplitText call (e.g. `type: "words"`) on top of an
+        // already `mask: "lines"`-split element corrupts the existing line
+        // structure — every word ends up back-detected as its own separate
+        // "line" (confirmed empirically; not a font-loading or ordering
+        // issue). So this scrub runs on `lineSplit.lines` itself instead of
+        // re-splitting into words — coarser (per-line, not per-word) but
+        // doesn't fight the mask reveal for the same DOM.
+        const lineSplit = new SplitText(headingRef.current, { type: "lines", mask: "lines" });
+        const scrubLines = lineSplit.lines.filter((line) => !line.querySelector(".text-gradient"));
+
+        gsap.from(lineSplit.lines, {
           yPercent: 110,
           opacity: 0,
           duration: 1,
@@ -51,11 +61,10 @@ export default function About() {
           },
         });
 
-        gsap.set(scrubWords, { color: "var(--color-muted)", opacity: 0.4 });
-        gsap.to(scrubWords, {
+        gsap.set(scrubLines, { color: "var(--color-muted)" });
+        gsap.to(scrubLines, {
           color: "var(--color-foreground)",
-          opacity: 1,
-          stagger: 0.05,
+          stagger: 0.15,
           ease: "none",
           scrollTrigger: {
             trigger: headingRef.current,
@@ -65,7 +74,7 @@ export default function About() {
           },
         });
 
-        return () => split.revert();
+        return () => lineSplit.revert();
       });
 
       return () => mm.revert();
@@ -91,11 +100,12 @@ export default function About() {
         </h2>
 
         <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
-          These days that means shipping the order management, warehouse &amp; dispatch tooling, and Shopify
-          storefronts that Partsklik LLP runs on — while finishing my Master&rsquo;s on the side.
+          That arc ran through 35+ client sites at DigiIndia Solutions before I moved to Partsklik LLP, where I
+          now architect the order management, warehouse &amp; dispatch tooling, and Shopify storefronts an entire
+          business runs on — while finishing my Master&rsquo;s on the side.
         </p>
 
-        <dl className="mt-16 grid grid-cols-1 gap-8 border-t border-border pt-10 sm:grid-cols-3">
+        <dl className="mt-16 grid grid-cols-2 gap-8 border-t border-border pt-10 sm:grid-cols-4">
           {facts.map((fact, i) => (
             <motion.div
               key={fact.label}

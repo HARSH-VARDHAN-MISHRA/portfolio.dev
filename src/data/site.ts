@@ -3,6 +3,7 @@
 // Keep this in sync if either changes.
 
 export const site = {
+  url: "https://harshv.vercel.app",
   name: "Harshvardhan Mishra",
   initials: "HM",
   role: "Frontend Developer",
