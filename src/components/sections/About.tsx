@@ -14,7 +14,6 @@ gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 const facts = [
   { label: "Based in", value: site.location },
   { label: "Currently", value: "Frontend Developer @ Partsklik LLP" },
-  { label: "Previously", value: "35+ sites shipped @ DigiIndia Solutions" },
   { label: "Studying", value: `${site.education.current.degree}, ${site.education.current.school}` },
 ];
 
@@ -29,11 +28,10 @@ export default function About() {
       const mm = gsap.matchMedia();
 
       /**
-       * Everything here — the line mask-in and the line-by-line color scrub —
-       * only ever runs when motion is allowed. Under reduced motion this
-       * `mm.add` block simply never executes, so the heading is left exactly
-       * as authored: full-opacity, full-color, no split markup, no JS-driven
-       * state to get stuck mid-transition.
+       * The per-line mask reveal below only ever runs when motion is
+       * allowed. Under reduced motion this `mm.add` block simply never
+       * executes, so the heading is left exactly as authored: full-opacity,
+       * no split markup, no JS-driven state to get stuck mid-transition.
        */
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         if (!headingRef.current) return;
@@ -41,36 +39,23 @@ export default function About() {
         // A SECOND SplitText call (e.g. `type: "words"`) on top of an
         // already `mask: "lines"`-split element corrupts the existing line
         // structure — every word ends up back-detected as its own separate
-        // "line" (confirmed empirically; not a font-loading or ordering
-        // issue). So this scrub runs on `lineSplit.lines` itself instead of
-        // re-splitting into words — coarser (per-line, not per-word) but
-        // doesn't fight the mask reveal for the same DOM.
+        // "line" (confirmed empirically). So this stays a single split —
+        // one clean per-line reveal, rather than layering a second
+        // scroll-scrubbed color pass on top that fought the reveal's own
+        // timing and read as janky/half-finished.
         const lineSplit = new SplitText(headingRef.current, { type: "lines", mask: "lines" });
-        const scrubLines = lineSplit.lines.filter((line) => !line.querySelector(".text-gradient"));
 
         gsap.from(lineSplit.lines, {
-          yPercent: 110,
+          yPercent: 115,
           opacity: 0,
-          duration: 1,
+          filter: "blur(10px)",
+          duration: 1.1,
           ease: "power4.out",
-          stagger: 0.09,
+          stagger: 0.1,
           scrollTrigger: {
             trigger: headingRef.current,
             start: "top 85%",
             once: true,
-          },
-        });
-
-        gsap.set(scrubLines, { color: "var(--color-muted)" });
-        gsap.to(scrubLines, {
-          color: "var(--color-foreground)",
-          stagger: 0.15,
-          ease: "none",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 80%",
-            end: "bottom 45%",
-            scrub: true,
           },
         });
 
@@ -99,13 +84,7 @@ export default function About() {
           — and I&rsquo;m back in school for my Master&rsquo;s.
         </h2>
 
-        <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
-          That arc ran through 35+ client sites at DigiIndia Solutions before I moved to Partsklik LLP, where I
-          now architect the order management, warehouse &amp; dispatch tooling, and Shopify storefronts an entire
-          business runs on — while finishing my Master&rsquo;s on the side.
-        </p>
-
-        <dl className="mt-16 grid grid-cols-2 gap-8 border-t border-border pt-10 sm:grid-cols-4">
+        <dl className="mt-16 grid grid-cols-1 gap-8 border-t border-border pt-10 sm:grid-cols-3">
           {facts.map((fact, i) => (
             <motion.div
               key={fact.label}
