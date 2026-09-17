@@ -11,6 +11,9 @@ type MagneticButtonProps = {
   className?: string;
   variant?: "primary" | "ghost";
   strength?: number;
+  target?: string;
+  rel?: string;
+  download?: boolean | string;
 };
 
 /**
@@ -25,6 +28,9 @@ export default function MagneticButton({
   className,
   variant = "primary",
   strength = 0.35,
+  target,
+  rel,
+  download,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const x = useMotionValue(0);
@@ -68,7 +74,7 @@ export default function MagneticButton({
 
   if (href) {
     return (
-      <a href={href} onClick={onClick} className="inline-block">
+      <a href={href} onClick={onClick} target={target} rel={rel} download={download} className="inline-block">
         {content}
       </a>
     );

@@ -42,7 +42,12 @@ export default function Navbar() {
           // was true, which creates a new containing block for `fixed`
           // descendants and collapsed this overlay down to the header's
           // own height instead of the full viewport.
-          className="fixed inset-0 z-30 flex flex-col justify-center bg-background px-6 sm:px-10"
+          //
+          // pt-24 clears the fixed header bar (z-40, sits above this menu)
+          // so the first link doesn't render underneath it; overflow-y-auto
+          // is a safety net for short viewports where the full list + contact
+          // row taller than the screen would otherwise get clipped.
+          className="fixed inset-0 z-30 flex flex-col justify-center gap-2 overflow-y-auto bg-background px-6 pb-10 pt-24 sm:px-10"
         >
           <ul className="flex flex-col">
             {navLinks.map((link, i) => (

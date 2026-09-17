@@ -16,10 +16,27 @@ export type Project = {
   tags: string[];
   href?: string;
   linkLabel?: string;
-  /** Real screenshot path. Falls back to the gradient tile when absent. */
+  /**
+   * Real screenshot path. Only needed when it deviates from the standard
+   * `/projects/${id}.png` convention every "compact" entry follows — use
+   * `getProjectImage(project)` to read it instead of `project.image`
+   * directly. "featured" entries intentionally have no screenshot and fall
+   * back to the gradient tile / CaseStudies' own hand-picked visual.
+   */
   image?: string;
   gradient: [string, string];
 };
+
+/**
+ * Every "compact" (client-site) entry's screenshot lives at
+ * `/projects/${id}.png` — that's the whole convention, so new entries don't
+ * need to repeat it. Set `image` explicitly only when a project's screenshot
+ * deviates from that path. "featured" entries stay imageless.
+ */
+export function getProjectImage(project: Project): string | undefined {
+  if (project.image) return project.image;
+  return project.variant === "compact" ? `/projects/${project.id}.png` : undefined;
+}
 
 export const projects: Project[] = [
   {
@@ -35,19 +52,6 @@ export const projects: Project[] = [
     gradient: ["#6D5EF9", "#22D3EE"],
   },
   {
-    id: "dwarka-housing",
-    variant: "featured",
-    title: "Dwarka Housing",
-    period: "2024",
-    category: "Full-Stack Real Estate Platform",
-    description:
-      "A full-stack real estate listing platform with separate admin, client, and server layers for managing property listings end to end.",
-    tags: ["React.js", "Node.js", "MongoDB"],
-    href: "https://github.com/HARSH-VARDHAN-MISHRA/Dwarka-Housing",
-    linkLabel: "View on GitHub",
-    gradient: ["#F5B942", "#6D5EF9"],
-  },
-  {
     id: "surpriso",
     variant: "featured",
     title: "Surpriso",
@@ -61,6 +65,19 @@ export const projects: Project[] = [
     gradient: ["#22D3EE", "#8C7DFF"],
   },
   {
+    id: "dwarka-housing",
+    variant: "featured",
+    title: "Dwarka Housing",
+    period: "2024",
+    category: "Full-Stack Real Estate Platform",
+    description:
+      "A full-stack real estate listing platform with separate admin, client, and server layers for managing property listings end to end.",
+    tags: ["React.js", "Node.js", "MongoDB"],
+    href: "https://github.com/HARSH-VARDHAN-MISHRA/Dwarka-Housing",
+    linkLabel: "View on GitHub",
+    gradient: ["#F5B942", "#6D5EF9"],
+  },
+  {
     id: "naxodent",
     variant: "compact",
     title: "Naxodent",
@@ -70,7 +87,6 @@ export const projects: Project[] = [
     tags: ["Shopify"],
     href: "https://naxodent.in/",
     linkLabel: "Open live site",
-    image: "/projects/naxodent.png",
     gradient: ["#134e4a", "#0f766e"],
   },
   {
@@ -83,7 +99,6 @@ export const projects: Project[] = [
     tags: ["React.js"],
     href: "https://surjeetindia.com/",
     linkLabel: "Open live site",
-    image: "/projects/surjeet-india.png",
     gradient: ["#1e3a8a", "#1d4ed8"],
   },
   {
@@ -96,7 +111,6 @@ export const projects: Project[] = [
     tags: ["Next.js"],
     href: "https://cleanzo-laundry.vercel.app/",
     linkLabel: "Open live site",
-    image: "/projects/cleanzo-laundry.png",
     gradient: ["#14532d", "#166534"],
   },
   {
@@ -109,7 +123,6 @@ export const projects: Project[] = [
     tags: ["React.js"],
     href: "https://www.zapioev.in/",
     linkLabel: "Open live site",
-    image: "/projects/zapioev.png",
     gradient: ["#4c1d95", "#5b21b6"],
   },
   {
@@ -122,7 +135,6 @@ export const projects: Project[] = [
     tags: ["E-Commerce"],
     href: "https://spiritualllifestyle.com/",
     linkLabel: "Open live site",
-    image: "/projects/spiritual-lifestyle.png",
     gradient: ["#78350f", "#92400e"],
   },
   {
@@ -135,7 +147,6 @@ export const projects: Project[] = [
     tags: ["React.js"],
     href: "https://adroilseals.com/",
     linkLabel: "Open live site",
-    image: "/projects/adroil-seals.png",
     gradient: ["#164e63", "#155e75"],
   },
   {
@@ -148,7 +159,6 @@ export const projects: Project[] = [
     tags: ["HTML", "CSS"],
     href: "https://harsh-vardhan-mishra.github.io/Matachitanewali/",
     linkLabel: "Open live site",
-    image: "/projects/matachitanewali.png",
     gradient: ["#7c2d12", "#9a3412"],
   },
   {
@@ -161,7 +171,6 @@ export const projects: Project[] = [
     tags: ["React.js"],
     href: "https://www.germanpurje.com/",
     linkLabel: "Open live site",
-    image: "/projects/german-purje.png",
     gradient: ["#312e81", "#3730a3"],
   },
   {
@@ -174,7 +183,6 @@ export const projects: Project[] = [
     tags: ["React.js"],
     href: "https://turbowale.com/",
     linkLabel: "Open live site",
-    image: "/projects/turbowale.png",
     gradient: ["#7f1d1d", "#991b1b"],
   },
 ];

@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Lock } from "lucide-react";
-import type { Project } from "@/data/projects";
-import DistortImage from "@/components/ui/DistortImage";
+import { getProjectImage, type Project } from "@/data/projects";
 
 /**
  * The little red/yellow/green window controls used on every preview tile
@@ -35,19 +34,24 @@ export function TrafficLights({ onClose }: { onClose?: () => void }) {
   );
 }
 
+/** Viewport coordinates of the click that opened the modal — used to anchor
+ * the "genie" open animation to where the card actually was. */
+export type CardOrigin = { x: number; y: number };
+
 export default function ProjectCard({
   project,
   onOpen,
 }: {
   project: Project;
-  onOpen: () => void;
+  onOpen: (origin: CardOrigin) => void;
 }) {
   const isFeatured = project.variant === "featured";
+  const image = getProjectImage(project);
 
   return (
     <motion.button
       type="button"
-      onClick={onOpen}
+      onClick={(e) => onOpen({ x: e.clientX, y: e.clientY })}
       data-cursor="link"
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -59,25 +63,20 @@ export default function ProjectCard({
         className="relative w-full overflow-hidden"
         style={{ aspectRatio: isFeatured ? "16 / 11" : "16 / 12" }}
       >
-        {project.image ? (
-          <>
-            {/* Plain optimized image — the real content, and the fallback
-                whenever WebGL is unavailable or reduced-motion is set. */}
-            <Image
-              src={project.image}
-              alt={`${project.title} website preview`}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-            />
-            {/* Same image, re-fetched at the same optimized size, drawn into
-                a WebGL canvas on top — invisible until it draws, so it
-                degrades to the plain image above with zero extra markup. */}
-            <DistortImage
-              src={`/_next/image?url=${encodeURIComponent(project.image)}&w=828&q=75`}
-              className="absolute inset-0 h-full w-full"
-            />
-          </>
+        {image ? (
+          // Plain optimized image. On hover it slowly pans from the top of
+          // the real screenshot down to the bottom (object-position is an
+          // animatable CSS property), so hovering previews the whole
+          // homepage instead of freezing on the top slice forever. The pan
+          // itself is gated behind `motion-safe` — reduced-motion visitors
+          // just see the static top crop, same as before.
+          <Image
+            src={image}
+            alt={`${project.title} website preview`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover object-top brightness-95 transition-all duration-300 ease-out group-hover:scale-[1.03] group-hover:brightness-100 motion-safe:group-hover:object-bottom motion-safe:group-hover:duration-[6000ms] motion-safe:group-hover:ease-linear"
+          />
         ) : (
           <div
             className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
@@ -87,7 +86,7 @@ export default function ProjectCard({
             }}
           />
         )}
-        {!project.image && <div className="absolute inset-0 bg-grid opacity-30" />}
+        {!image && <div className="absolute inset-0 bg-grid opacity-30" />}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/10" />
 
         <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-white/10 bg-black/25 px-4 py-2.5 backdrop-blur-sm">

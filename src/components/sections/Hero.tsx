@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, FileDown } from "lucide-react";
 import { site } from "@/data/site";
 import RevealText from "@/components/ui/RevealText";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -32,18 +32,20 @@ export default function Hero() {
       </motion.div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-10 px-6 pt-32 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-8 lg:pb-4 lg:pt-24">
-        <div className="order-2 lg:order-1">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-10 px-6 pt-32 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:pb-4 lg:pt-24">
+        <div className="order-2 lg:order-1 lg:border-l lg:border-border lg:pl-10">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-1.5 font-mono text-xs tracking-wide text-muted"
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-7 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-2 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-2" />
-            </span>
+            <motion.span
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              className="h-px w-8 origin-left bg-border-strong"
+            />
             {site.status}
           </motion.div>
 
@@ -86,6 +88,10 @@ export default function Hero() {
             <MagneticButton href="#contact" variant="ghost">
               Get in touch
             </MagneticButton>
+            <MagneticButton href={site.resumeUrl} target="_blank" rel="noreferrer noopener" variant="ghost">
+              <FileDown className="h-4 w-4" />
+              Resume
+            </MagneticButton>
           </motion.div>
         </div>
 
@@ -93,7 +99,7 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          className="order-1 lg:order-2"
+          className="order-1 flex justify-center lg:order-2 lg:justify-end"
         >
           <HeroPortrait />
         </motion.div>

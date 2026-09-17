@@ -1,29 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { ExternalLink, Lock } from "lucide-react";
-import type { Project } from "@/data/projects";
-import { TrafficLights } from "@/components/ui/ProjectCard";
+import { getProjectImage, type Project } from "@/data/projects";
+import { TrafficLights, type CardOrigin } from "@/components/ui/ProjectCard";
 
-// A springy, overshoot-then-settle curve — the closest a plain scale/opacity
-// tween gets to a "genie" open without a shared-element FLIP (that, combined
-// with AnimatePresence's exit-removal, proved unreliable in testing).
-const genieOpen = { duration: 0.45, ease: [0.34, 1.35, 0.64, 1] as const };
+// A macOS-Dock "genie" reads as originating from a point, with a brief
+// non-uniform squash/stretch rather than a uniform scale. We don't do a full
+// shared-element FLIP transition — that, combined with AnimatePresence's
+// exit-removal, proved unreliable in testing — but anchoring `transformOrigin`
+// to the clicked card (see `origin` prop below) and giving scaleY its own
+// slightly bouncier timing than scaleX gets close enough to read as "genie-ish"
+// while staying simple and reliable.
+const genieOpen = {
+  default: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+  scaleY: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as const },
+  scaleX: { duration: 0.38, ease: [0.34, 1.15, 0.64, 1] as const },
+};
 const genieClose = { duration: 0.2, ease: "easeIn" as const };
 const CLOSE_MS = 220; // slightly longer than genieClose, so the fade is never cut off
 
 export default function ProjectModal({
   project,
+  origin,
   onClose,
 }: {
   project: Project;
+  /** Viewport coordinates of the card click that opened this modal — used
+   * to anchor the genie animation's transform-origin. Optional so the modal
+   * still works (falling back to a centered scale) without it. */
+  origin?: CardOrigin | null;
   onClose: () => void;
 }) {
   // Starts true so Motion's initial→animate transition plays the "open"
   // animation on mount by itself — no effect-driven state kickoff needed.
   const [visible, setVisible] = useState(true);
+  const image = getProjectImage(project);
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [transformOrigin, setTransformOrigin] = useState("50% 50%");
+
+  // Runs before paint, so the panel's very first frame already scales from
+  // the right spot instead of snapping to it a frame later.
+  useLayoutEffect(() => {
+    if (!origin || !panelRef.current) return;
+    const rect = panelRef.current.getBoundingClientRect();
+    setTransformOrigin(`${origin.x - rect.left}px ${origin.y - rect.top}px`);
+  }, [origin]);
 
   const requestClose = () => {
     setVisible(false);
@@ -55,18 +80,22 @@ export default function ProjectModal({
       className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md sm:p-10"
     >
       <motion.div
+        ref={panelRef}
         onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.85, y: 16 }}
+        initial={{ opacity: 0, scaleX: 0.6, scaleY: 0.4 }}
         animate={
-          visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.9, y: 8 }
+          visible
+            ? { opacity: 1, scaleX: 1, scaleY: 1 }
+            : { opacity: 0, scaleX: 0.75, scaleY: 0.55 }
         }
         transition={visible ? genieOpen : genieClose}
+        style={{ transformOrigin }}
         className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-border-strong bg-surface shadow-2xl"
       >
-        <div className="relative w-full overflow-hidden" style={{ aspectRatio: project.image ? "16 / 10" : "16 / 9" }}>
-          {project.image ? (
+        <div className="relative w-full overflow-hidden" style={{ aspectRatio: image ? "16 / 10" : "16 / 9" }}>
+          {image ? (
             <Image
-              src={project.image}
+              src={image}
               alt={`${project.title} website preview`}
               fill
               sizes="640px"
