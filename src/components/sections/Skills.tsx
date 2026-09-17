@@ -36,7 +36,7 @@ export default function Skills() {
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10">
-        <div className="grid grid-cols-1 gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {skillGroups.map((group, gi) => (
             <div key={group.category}>
               <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-accent-2">

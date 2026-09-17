@@ -112,7 +112,7 @@ export default function Hero() {
         className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-6 pb-10 sm:px-10"
       >
         <p className="max-w-[16rem] text-xs leading-relaxed text-muted-2">
-          Frontend Developer, React.js &amp; Next.js — {site.location}.
+          {site.role}, {site.roleDetail} — {site.location}.
         </p>
 
         <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-muted">

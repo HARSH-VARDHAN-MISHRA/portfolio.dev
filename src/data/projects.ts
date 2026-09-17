@@ -1,9 +1,10 @@
 // Real projects only. "featured" gets full case-study detail; "compact" is
 // for the client-site tiles — both open the same detail modal.
 //
-// The Partsklik entry matches the 2026 resume: three enterprise-grade
-// business automation platforms (not four — an earlier draft of this site
-// used a verbal "4", the written resume is the source of truth).
+// The Partsklik entry matches the 2026 resume's "Key Impact" line: 4
+// CRM/ERP & B2B platforms — 3 internal CRMs (Partsklik, Kuber TurboTech,
+// Partsklik Plus) plus Kuber TurboTech's own multi-tenant retailer
+// ordering portal, counted as the 4th.
 // Live client sites use real screenshots captured from the actual URLs.
 
 export type Project = {
@@ -42,12 +43,12 @@ export const projects: Project[] = [
   {
     id: "partsklik-platform",
     variant: "featured",
-    title: "Enterprise Business Automation Platform",
+    title: "Enterprise CRM/ERP & B2B Platform Suite",
     period: "2024 — Present",
-    category: "CRM & ERP · Partsklik LLP",
+    category: "CRM, ERP & B2B · Partsklik LLP",
     description:
-      "Frontend architecture for three enterprise-grade platforms spanning order management, inventory, warehouse ops, and dispatch. Built a multi-location store system with role-based access, a dispatch-aware sales engine with live stock validation, Shopify + Porter logistics API integration, OTP auth, and real-time KPI dashboards.",
-    tags: ["React.js", "Next.js", "Shopify API", "Porter API", "WebSockets"],
+      "Frontend for 4 CRM/ERP & B2B platforms — Partsklik, Kuber TurboTech, and Partsklik Plus, plus Kuber TurboTech's own multi-tenant B2B ordering portal for regional retail stores. Covers the full order lifecycle: enquiries, proforma invoicing, inventory, warehouse ops, and dispatch. Shopify (2 stores) + Razorpay for commerce, Porter/Bluedart/Shiprocket for logistics tracking, and OpenAI/Gemini/Perplexity for OCR and WhatsApp automation — all real-time over WebSockets.",
+    tags: ["React.js", "Next.js", "Shopify API", "Razorpay", "OpenAI", "WebSockets"],
     linkLabel: "Private client system",
     gradient: ["#6D5EF9", "#22D3EE"],
   },

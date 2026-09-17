@@ -15,8 +15,8 @@ export const experience: ExperienceEntry[] = [
     role: "Frontend Developer (React.js / Next.js)",
     company: "Partsklik LLP",
     description:
-      "Lead frontend architecture for three enterprise automation platforms — a multi-location store system with role-based access, a dispatch-aware sales engine with live stock validation, Shopify + Porter API integration, OTP auth, and real-time KPI dashboards.",
-    tags: ["React.js", "Next.js", "Shopify API", "Porter API", "WebSockets"],
+      "Lead frontend architecture across 4 CRM/ERP & B2B platforms — Partsklik, Kuber TurboTech, and Partsklik Plus — including a multi-tenant B2B ordering portal with role-based access, a dispatch-aware sales engine with live stock validation, Shopify (2 stores) + Razorpay payments, Porter/Bluedart/Shiprocket logistics tracking, OpenAI/Gemini/Perplexity-powered OCR and WhatsApp automation, and a self-hosted Synology NAS backend.",
+    tags: ["React.js", "Next.js", "Shopify API", "Razorpay", "OpenAI", "WebSockets"],
   },
   {
     period: "Sep 2023 — Sep 2024",
@@ -37,7 +37,7 @@ export type EducationEntry = {
 
 export const education: EducationEntry[] = [
   {
-    period: "2025 — Present",
+    period: "2026 — Present",
     degree: "Master of Computer Applications (MCA)",
     school: "Lovely Professional University",
     status: "In progress",

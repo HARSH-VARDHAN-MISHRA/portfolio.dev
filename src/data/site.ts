@@ -7,10 +7,10 @@ export const site = {
   name: "Harshvardhan Mishra",
   initials: "HM",
   role: "Frontend Developer",
-  roleDetail: "React.js & Next.js",
+  roleDetail: "React.js, Next.js & TypeScript",
   tagline: "I build the frontend that CRM systems and warehouses run on.",
   description:
-    "Frontend developer architecting enterprise CRM, ERP, and e-commerce platforms — order management, warehouse & dispatch systems, Shopify and Porter API integrations, and AI-driven automation. Currently at Partsklik LLP.",
+    "Frontend developer building enterprise CRM, ERP, and e-commerce platforms — order management, warehouse & dispatch systems, Shopify + Razorpay commerce, Porter/Bluedart/Shiprocket logistics tracking, and AI automation with OpenAI, Gemini & Perplexity. Currently at Partsklik LLP.",
   location: "Delhi, India",
   status: "Building CRM systems @ Partsklik LLP",
   email: "mharshvardhan40@gmail.com",
@@ -24,7 +24,7 @@ export const site = {
     current: {
       degree: "Master of Computer Applications (MCA)",
       school: "Lovely Professional University",
-      period: "2025 — Present",
+      period: "2026 — Present",
     },
     completed: {
       degree: "Bachelor of Computer Applications (BCA)",

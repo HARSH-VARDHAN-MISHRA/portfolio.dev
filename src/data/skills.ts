@@ -1,6 +1,6 @@
-// Real skills from the 2026 resume + GitHub profile. No proficiency scores —
-// the resume doesn't rate them, so grouped, unweighted tags are the honest
-// option.
+// Real skills from the current resume + GitHub profile. No proficiency
+// scores — the resume doesn't rate them, so grouped, unweighted tags are
+// the honest option.
 
 export type SkillGroup = { category: string; items: string[] };
 
@@ -10,7 +10,8 @@ export const skillGroups: SkillGroup[] = [
     items: [
       "React.js",
       "Next.js",
-      "JavaScript",
+      "TypeScript",
+      "JavaScript (ES6+)",
       "Redux / Context API",
       "HTML5",
       "CSS3",
@@ -20,23 +21,41 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    category: "Integration & Data",
-    items: ["REST APIs", "WebSockets", "Shopify API", "Porter API", "Axios", "MySQL", "MongoDB", "Django"],
+    category: "E-Commerce, Payments & Logistics",
+    items: ["Shopify API", "Razorpay", "Porter API", "Bluedart API", "Shiprocket API"],
+  },
+  {
+    category: "AI & Automation",
+    items: ["OpenAI API", "Google Gemini API", "Perplexity API", "OCR Integration", "WhatsApp Automation"],
   },
   {
     category: "Business Systems",
     items: [
-      "CRM Development",
-      "ERP Systems",
+      "CRM & ERP Development",
       "Order & Inventory Management",
       "Warehouse Management",
-      "OCR Integration",
+      "Multi-tenant Business Platforms",
       "Business Automation",
     ],
   },
   {
-    category: "Tooling",
-    items: ["Git", "GitHub", "Vite", "Node.js", "Express.js", "Postman", "Recharts"],
+    category: "Tools & Backend",
+    items: [
+      "Git",
+      "GitHub",
+      "Vite",
+      "Node.js",
+      "Express.js",
+      "REST APIs",
+      "WebSockets",
+      "Axios",
+      "Postman",
+      "Recharts",
+      "MySQL",
+      "MongoDB",
+      "Django",
+      "Synology NAS",
+    ],
   },
 ];
 
@@ -55,6 +74,10 @@ export const marqueeLogos = [
   { name: "MySQL", slug: "mysql" },
   { name: "Django", slug: "django" },
   { name: "Shopify", slug: "shopify" },
+  { name: "Razorpay", slug: "razorpay" },
+  { name: "OpenAI", slug: "openai" },
+  { name: "Gemini", slug: "googlegemini" },
+  { name: "Perplexity", slug: "perplexity" },
   { name: "Git", slug: "git" },
   { name: "GitHub", slug: "github" },
   { name: "Vite", slug: "vite" },
