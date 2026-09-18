@@ -47,7 +47,7 @@ export default function GithubStats() {
   return (
     <section id="open-source" className="relative border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionLabel index="07" label="Open Source" />
+        <SectionLabel index="08" label="Open Source" />
         <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="max-w-xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
             <RevealText text="Live from GitHub," />

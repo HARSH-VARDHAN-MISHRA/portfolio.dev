@@ -39,7 +39,7 @@ export default function Hero() {
       </motion.div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-10 px-6 pt-32 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:pb-4 lg:pt-24">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-10 px-6 pt-32 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:pb-4 lg:pt-20">
         <div className="order-2 lg:order-1 lg:border-l lg:border-border lg:pl-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -56,7 +56,7 @@ export default function Hero() {
             {site.status}
           </motion.div>
 
-          <h1 className="max-w-xl font-display text-[clamp(2.4rem,5.5vw,4.5rem)] font-medium leading-[1.05] tracking-tight text-foreground">
+          <h1 className="max-w-xl font-display text-[clamp(2.4rem,5.8vw,4.85rem)] font-medium leading-[1.05] tracking-tight text-foreground">
             <RevealText text="I build the frontend" />
             <br />
             <RevealText text="that CRM systems and" delay={0.15} />

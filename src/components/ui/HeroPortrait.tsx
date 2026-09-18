@@ -19,7 +19,7 @@ export default function HeroPortrait() {
   return (
     <motion.div
       style={{ y: parallaxY, opacity: parallaxOpacity }}
-      className="relative mx-auto w-full max-w-[260px] sm:max-w-[320px] lg:mx-0 lg:max-w-[400px]"
+      className="relative mx-auto w-full max-w-[260px] sm:max-w-[320px] lg:mx-0 lg:max-w-[440px]"
     >
       <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}>
         <div className="relative">
@@ -34,7 +34,7 @@ export default function HeroPortrait() {
             width={760}
             height={748}
             preload
-            sizes="(max-width: 1024px) 55vw, 400px"
+            sizes="(max-width: 1024px) 55vw, 440px"
             draggable={false}
             className="relative z-10 h-auto w-full select-none"
             style={{

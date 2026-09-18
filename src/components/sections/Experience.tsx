@@ -10,7 +10,7 @@ export default function Experience() {
   return (
     <section id="experience" className="relative border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionLabel index="06" label="Experience" />
+        <SectionLabel index="07" label="Experience" />
         <h2 className="mt-10 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
           <RevealText text="Where I've built it." />
         </h2>

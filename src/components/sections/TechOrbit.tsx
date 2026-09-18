@@ -184,7 +184,7 @@ export default function TechOrbit() {
   return (
     <section id="tech-orbit" className="relative overflow-hidden border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionLabel index="03" label="Tools In Orbit" />
+        <SectionLabel index="04" label="Tools In Orbit" />
         <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="max-w-xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
             <RevealText text="Everything orbiting" />

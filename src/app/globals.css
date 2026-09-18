@@ -92,6 +92,16 @@ html[data-theme="light"] {
   mix-blend-mode: multiply;
 }
 
+/* The integrations logo tiles' dark ambient shadow is tuned for the dark
+   theme's near-black background, where it reads as a clean lift under a
+   white card. Against the light theme's near-white background that same
+   shadow just looks like a smudge under a barely-visible card, so it gets
+   a softer, tinted shadow plus a real border for definition instead. */
+[data-theme="light"] [data-logo-tile] {
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 24px -14px rgba(15, 23, 42, 0.18);
+}
+
 body {
   background: var(--color-background);
   color: var(--color-foreground);

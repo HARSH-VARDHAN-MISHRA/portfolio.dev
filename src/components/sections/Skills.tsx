@@ -11,7 +11,7 @@ export default function Skills() {
   return (
     <section id="skills" className="relative border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionLabel index="05" label="Skills & Tools" />
+        <SectionLabel index="06" label="Skills & Tools" />
         <h2 className="mt-10 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
           <RevealText text="The stack behind the systems." />
         </h2>

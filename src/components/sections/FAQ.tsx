@@ -13,7 +13,7 @@ export default function FAQ() {
   return (
     <section id="faq" className="relative border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-4xl px-6 sm:px-10">
-        <SectionLabel index="08" label="FAQ" />
+        <SectionLabel index="09" label="FAQ" />
         <h2 className="mt-10 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
           <RevealText text="Questions people usually ask." />
         </h2>

@@ -3,6 +3,7 @@ import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { site } from "@/data/site";
+import { skillGroups } from "@/data/skills";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import CustomCursor from "@/components/ui/CustomCursor";
@@ -71,6 +72,16 @@ export const metadata: Metadata = {
     "Warehouse Management Systems",
     "Order Management Systems",
     "Partsklik LLP",
+    "Partsklik",
+    "Kuber TurboTech",
+    "Partsklik Plus",
+    "Naxodent",
+    "German Purje",
+    "Surjeet India",
+    "Adroil Seals",
+    "Turbowale",
+    "Cleanzo",
+    "Zapioev",
     "Harshvardhan Mishra portfolio",
     "Delhi",
     "India",
@@ -101,6 +112,29 @@ export const metadata: Metadata = {
   },
 };
 
+// Person structured data: ties the name to LinkedIn/GitHub (`sameAs`) and
+// names the actual companies/platforms worked on, so search engines have a
+// chance of surfacing this site as an entity result for those queries —
+// not something on-page keywords alone can do.
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  url: site.url,
+  image: `${site.url}${site.portraitSrc}`,
+  jobTitle: site.role,
+  description: site.description,
+  email: `mailto:${site.email}`,
+  address: { "@type": "PostalAddress", addressLocality: "Delhi", addressCountry: "IN" },
+  worksFor: { "@type": "Organization", name: "Partsklik LLP" },
+  alumniOf: [
+    { "@type": "CollegeOrUniversity", name: site.education.current.school },
+    { "@type": "CollegeOrUniversity", name: site.education.completed.school },
+  ],
+  sameAs: [site.linkedin, site.github],
+  knowsAbout: skillGroups.flatMap((group) => group.items),
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -118,6 +152,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
           } catch (e) {}`}
         </Script>
+        {/* Plain script tag, not next/script — this needs to be present in
+            the initial HTML for crawlers, not deferred/hydrated. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       </head>
       <body>
         <SmoothScroll />

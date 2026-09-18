@@ -78,8 +78,8 @@ export default function About() {
         >
           I started by building small-business websites.
           <br />
-          Three years later, I own the{" "}
-          <span className="text-gradient">frontend of enterprise CRM, ERP &amp; e-commerce</span> platforms
+          3+ years later, I&rsquo;m shipping the{" "}
+          <span className="text-gradient">frontend for 4 enterprise CRM, ERP &amp; e-commerce</span> platforms
           <br />
           — and I&rsquo;m back in school for my Master&rsquo;s.
         </h2>

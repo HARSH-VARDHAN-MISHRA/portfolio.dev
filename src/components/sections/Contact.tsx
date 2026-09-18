@@ -34,7 +34,7 @@ export default function Contact() {
       <GradientAurora className="opacity-60" />
       <div className="relative z-10 mx-auto max-w-7xl px-6 text-center sm:px-10">
         <div className="flex justify-center">
-          <SectionLabel index="09" label="Contact" />
+          <SectionLabel index="10" label="Contact" />
         </div>
 
         <h2 className="mx-auto mt-10 max-w-3xl font-display text-[clamp(2.2rem,6vw,5rem)] font-medium leading-[1.05] tracking-tight text-foreground">

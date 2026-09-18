@@ -3,6 +3,7 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Specialties from "@/components/sections/Specialties";
+import Integrations from "@/components/sections/Integrations";
 import TechOrbit from "@/components/sections/TechOrbit";
 import CaseStudies from "@/components/sections/CaseStudies";
 import Work from "@/components/sections/Work";
@@ -20,6 +21,7 @@ export default function Home() {
         <Hero />
         <About />
         <Specialties />
+        <Integrations />
         <TechOrbit />
         <CaseStudies />
         <Work />

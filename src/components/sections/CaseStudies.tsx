@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { Lock, ArrowUpRight, LayoutDashboard, ShoppingBag, Building2, type LucideIcon } from "lucide-react";
-import { projects } from "@/data/projects";
+import { Lock, ArrowUpRight, LayoutDashboard, ShoppingBag, Layers, type LucideIcon } from "lucide-react";
+import { projects, getProjectImage } from "@/data/projects";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { TrafficLights } from "@/components/ui/ProjectCard";
 
@@ -16,40 +17,68 @@ const featured = projects.filter((p) => p.variant === "featured");
 type CaseKind = "crm" | "ecommerce" | "other";
 
 /**
- * These three ids are the only "featured" case studies today, and none of
- * them have a real screenshot (two are private, one predates screenshots) —
- * so each gets a hand-picked badge/icon/visual `kind` instead of one derived
- * from free-text category strings, which would be fragile to edits.
+ * Hand-picked badge/icon/visual `kind` per case study, rather than one
+ * derived from free-text category strings (fragile to edits). Naxodent has
+ * a real screenshot (see `getProjectImage`), so its `kind` only matters for
+ * the badge icon — the other two still fall back to `CaseVisual`'s abstract
+ * skeleton since they're private/imageless.
  */
 const CASE_META: Record<string, { kind: CaseKind; badge: string; Icon: LucideIcon }> = {
   "partsklik-platform": { kind: "crm", badge: "CRM, ERP & B2B", Icon: LayoutDashboard },
-  surpriso: { kind: "ecommerce", badge: "E-Commerce", Icon: ShoppingBag },
-  "dwarka-housing": { kind: "other", badge: "Real Estate Platform", Icon: Building2 },
+  naxodent: { kind: "ecommerce", badge: "E-Commerce", Icon: ShoppingBag },
+  surpriso: { kind: "other", badge: "Full-Stack Capstone", Icon: Layers },
 };
 
 /**
- * Stand-in product visual for a case study with no real screenshot — a
- * browser-chrome frame (same TrafficLights language as the Work grid) around
- * an abstract, kind-specific skeleton layout, so a CRM dashboard reads
- * differently from a storefront grid or a listings feed at a glance.
+ * Product visual for a case study — a real screenshot when one exists
+ * (`image`, e.g. Naxodent's live storefront), otherwise the same
+ * browser-chrome frame (TrafficLights language shared with the Work grid)
+ * around an abstract, kind-specific skeleton layout, so a private CRM
+ * dashboard still reads differently from a storefront grid or a listings
+ * feed at a glance.
  */
-function CaseVisual({ kind, gradient }: { kind: CaseKind; gradient: [string, string] }) {
+function CaseVisual({
+  kind,
+  gradient,
+  image,
+  title,
+}: {
+  kind: CaseKind;
+  gradient: [string, string];
+  image?: string;
+  title: string;
+}) {
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface/60 sm:aspect-[16/11]">
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-40"
-        style={{
-          backgroundImage: `radial-gradient(circle at 25% 15%, ${gradient[0]}, transparent 60%), radial-gradient(circle at 85% 85%, ${gradient[1]}, transparent 55%)`,
-        }}
-      />
-      <div aria-hidden className="absolute inset-0 bg-grid opacity-20" />
+      {image ? (
+        <Image
+          src={image}
+          alt={`${title} website preview`}
+          fill
+          sizes="(max-width: 1024px) 100vw, 45vw"
+          className="object-cover object-top"
+        />
+      ) : (
+        <>
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-40"
+            style={{
+              backgroundImage: `radial-gradient(circle at 25% 15%, ${gradient[0]}, transparent 60%), radial-gradient(circle at 85% 85%, ${gradient[1]}, transparent 55%)`,
+            }}
+          />
+          <div aria-hidden className="absolute inset-0 bg-grid opacity-20" />
+        </>
+      )}
 
       <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-white/10 bg-black/25 px-4 py-2.5 backdrop-blur-sm">
         <TrafficLights />
-        <span className="truncate pl-3 font-mono text-[10px] text-white/60">private.internal</span>
+        <span className="truncate pl-3 font-mono text-[10px] text-white/60">
+          {image ? title.toLowerCase().replace(/\s+/g, "") + ".com" : "private.internal"}
+        </span>
       </div>
 
+      {!image && (
       <div aria-hidden className="absolute inset-0 flex items-center p-6 pt-14 sm:p-8 sm:pt-16">
         {kind === "crm" && (
           <div className="grid w-full grid-cols-3 gap-3">
@@ -101,6 +130,7 @@ function CaseVisual({ kind, gradient }: { kind: CaseKind; gradient: [string, str
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }
@@ -223,8 +253,9 @@ export default function CaseStudies() {
 
       <div ref={trackRef} className="flex flex-col lg:h-full lg:w-fit lg:flex-row">
         {featured.map((project, i) => {
-          const meta = CASE_META[project.id] ?? { kind: "other" as const, badge: project.category, Icon: Building2 };
+          const meta = CASE_META[project.id] ?? { kind: "other" as const, badge: project.category, Icon: Layers };
           const { Icon } = meta;
+          const image = getProjectImage(project);
 
           return (
             <article
@@ -299,7 +330,7 @@ export default function CaseStudies() {
                 </div>
 
                 <div className="case-reveal">
-                  <CaseVisual kind={meta.kind} gradient={project.gradient} />
+                  <CaseVisual kind={meta.kind} gradient={project.gradient} image={image} title={project.title} />
                 </div>
               </div>
             </article>

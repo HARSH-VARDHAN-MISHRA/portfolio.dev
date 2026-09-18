@@ -37,7 +37,7 @@ export default function Work() {
   return (
     <section id="work" className="relative border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
-        <SectionLabel index="04" label="More Work" />
+        <SectionLabel index="05" label="More Work" />
         <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
             <RevealText text="Real client sites," />
