@@ -5,80 +5,98 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { Lock, ArrowUpRight, LayoutDashboard, ShoppingBag, Layers, type LucideIcon } from "lucide-react";
-import { projects, getProjectImage } from "@/data/projects";
+import { Lock, ArrowRight, LayoutDashboard, ShoppingBag, Layers, type LucideIcon } from "lucide-react";
+import { projects, getProjectImage, type Project } from "@/data/projects";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { TrafficLights } from "@/components/ui/ProjectCard";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const featured = projects.filter((p) => p.variant === "featured");
+// Only the Partsklik platform suite is a real single-project deep-dive —
+// it's the one entry that's still `variant: "featured"`. The other two
+// case-study slots are category roll-ups (below) so they scale as more
+// client sites get added, instead of pinning the spotlight on one project.
+const singleCase = projects.find((p) => p.id === "partsklik-platform")!;
 
 type CaseKind = "crm" | "ecommerce" | "other";
 
 /**
- * Hand-picked badge/icon/visual `kind` per case study, rather than one
- * derived from free-text category strings (fragile to edits). Naxodent has
- * a real screenshot (see `getProjectImage`), so its `kind` only matters for
- * the badge icon — the other two still fall back to `CaseVisual`'s abstract
- * skeleton since they're private/imageless.
+ * A category roll-up: instead of one project, it references a handful of
+ * real (already-shipped) compact projects by id and shows their actual
+ * screenshots as a small gallery — so "E-Commerce" or "Business Websites"
+ * reads as a practice area, not a single client name, and absorbs new
+ * client sites over time without needing its own new case study.
  */
-const CASE_META: Record<string, { kind: CaseKind; badge: string; Icon: LucideIcon }> = {
-  "partsklik-platform": { kind: "crm", badge: "CRM, ERP & B2B", Icon: LayoutDashboard },
-  naxodent: { kind: "ecommerce", badge: "E-Commerce", Icon: ShoppingBag },
-  surpriso: { kind: "other", badge: "Full-Stack Capstone", Icon: Layers },
+type CategoryCase = {
+  id: string;
+  badge: string;
+  kind: CaseKind;
+  Icon: LucideIcon;
+  title: string;
+  category: string;
+  period: string;
+  description: string;
+  tags: string[];
+  projectIds: string[];
+  ctaLabel: string;
 };
 
+const categoryCases: CategoryCase[] = [
+  {
+    id: "ecommerce-category",
+    badge: "E-Commerce",
+    kind: "ecommerce",
+    Icon: ShoppingBag,
+    title: "Shopify Storefronts",
+    category: "Shopify · Partsklik LLP",
+    period: "2024",
+    description:
+      "Shopify storefronts built as part of Partsklik's multi-channel commerce integration — from automotive parts to lifestyle brands, each store plugs into the same central catalog and order sync, with Razorpay wired in for payments.",
+    tags: ["Shopify", "E-Commerce", "Razorpay"],
+    projectIds: ["german-purje", "turbowale"],
+    ctaLabel: "Browse Shopify stores",
+  },
+  {
+    id: "business-category",
+    badge: "Business Websites",
+    kind: "other",
+    Icon: Layers,
+    title: "Business & Service Websites",
+    category: "Business Websites · Multiple Clients",
+    period: "2024 — 2025",
+    description:
+      "Marketing sites, service bookings, and enquiry-driven sites for real businesses — from plain HTML/CSS/JS to Next.js and PHP, each one shipped fast and built to turn visitors into leads.",
+    tags: ["Next.js", "JavaScript", "PHP"],
+    projectIds: ["cleanzo-laundry", "surjeet-india", "zapioev"],
+    ctaLabel: "Browse business sites",
+  },
+];
+
+const totalPanels = 1 + categoryCases.length;
+
 /**
- * Product visual for a case study — a real screenshot when one exists
- * (`image`, e.g. Naxodent's live storefront), otherwise the same
- * browser-chrome frame (TrafficLights language shared with the Work grid)
- * around an abstract, kind-specific skeleton layout, so a private CRM
- * dashboard still reads differently from a storefront grid or a listings
- * feed at a glance.
+ * Product visual for the single deep-dive case study — a browser-chrome
+ * frame (TrafficLights language shared with the Work grid) around an
+ * abstract, kind-specific skeleton layout, since Partsklik is a private
+ * system with no public screenshot.
  */
-function CaseVisual({
-  kind,
-  gradient,
-  image,
-  title,
-}: {
-  kind: CaseKind;
-  gradient: [string, string];
-  image?: string;
-  title: string;
-}) {
+function CaseVisual({ kind, gradient }: { kind: CaseKind; gradient: [string, string] }) {
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface/60 sm:aspect-[16/11]">
-      {image ? (
-        <Image
-          src={image}
-          alt={`${title} website preview`}
-          fill
-          sizes="(max-width: 1024px) 100vw, 45vw"
-          className="object-cover object-top"
-        />
-      ) : (
-        <>
-          <div
-            aria-hidden
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage: `radial-gradient(circle at 25% 15%, ${gradient[0]}, transparent 60%), radial-gradient(circle at 85% 85%, ${gradient[1]}, transparent 55%)`,
-            }}
-          />
-          <div aria-hidden className="absolute inset-0 bg-grid opacity-20" />
-        </>
-      )}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-40"
+        style={{
+          backgroundImage: `radial-gradient(circle at 25% 15%, ${gradient[0]}, transparent 60%), radial-gradient(circle at 85% 85%, ${gradient[1]}, transparent 55%)`,
+        }}
+      />
+      <div aria-hidden className="absolute inset-0 bg-grid opacity-20" />
 
       <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-white/10 bg-black/25 px-4 py-2.5 backdrop-blur-sm">
         <TrafficLights />
-        <span className="truncate pl-3 font-mono text-[10px] text-white/60">
-          {image ? title.toLowerCase().replace(/\s+/g, "") + ".com" : "private.internal"}
-        </span>
+        <span className="truncate pl-3 font-mono text-[10px] text-white/60">private.internal</span>
       </div>
 
-      {!image && (
       <div aria-hidden className="absolute inset-0 flex items-center p-6 pt-14 sm:p-8 sm:pt-16">
         {kind === "crm" && (
           <div className="grid w-full grid-cols-3 gap-3">
@@ -103,44 +121,67 @@ function CaseVisual({
             </div>
           </div>
         )}
-
-        {kind === "ecommerce" && (
-          <div className="grid w-full grid-cols-3 gap-3">
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <div key={idx} className="space-y-1.5 rounded-lg bg-white/5 p-2">
-                <div className="aspect-square w-full rounded-md bg-white/15" />
-                <div className="h-1.5 w-3/4 rounded-full bg-white/20" />
-                <div className="h-1.5 w-1/2 rounded-full bg-white/10" />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {kind === "other" && (
-          <div className="w-full space-y-3">
-            {Array.from({ length: 3 }).map((_, idx) => (
-              <div key={idx} className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-                <div className="h-11 w-16 shrink-0 rounded-md bg-white/15" />
-                <div className="flex-1 space-y-1.5">
-                  <div className="h-2 w-3/4 rounded-full bg-white/20" />
-                  <div className="h-2 w-1/2 rounded-full bg-white/10" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
-      )}
+    </div>
+  );
+}
+
+/**
+ * A category case study's visual: the same overall browser-chrome frame and
+ * bounding box as `CaseVisual` (so all three panels carry the same visual
+ * weight), with a real-screenshot collage inside instead of one hero image —
+ * 2 references sit side by side; a 3rd, odd one out gets a bigger primary
+ * tile with the other two stacked beside it, like an editorial photo grid
+ * rather than three equal, disconnected squares.
+ */
+function CategoryVisual({ projectIds, chromeLabel }: { projectIds: string[]; chromeLabel: string }) {
+  const items = projectIds
+    .map((id) => projects.find((p) => p.id === id))
+    .filter((p): p is Project => Boolean(p));
+
+  return (
+    <div className="relative flex aspect-[4/3] w-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/60 sm:aspect-[16/11]">
+      <div className="flex items-center justify-between border-b border-white/10 bg-black/25 px-4 py-2.5 backdrop-blur-sm">
+        <TrafficLights />
+        <span className="truncate pl-3 font-mono text-[10px] text-white/60">{chromeLabel}</span>
+      </div>
+
+      <div className={`grid flex-1 gap-1 ${items.length >= 3 ? "grid-cols-2 grid-rows-2" : "grid-cols-2"}`}>
+        {items.map((item, idx) => {
+          const isPrimary = items.length >= 3 && idx === 0;
+          const image = getProjectImage(item);
+          return (
+            <div
+              key={item.id}
+              className={`group/thumb relative overflow-hidden ${isPrimary ? "row-span-2" : ""}`}
+            >
+              {image && (
+                <Image
+                  src={image}
+                  alt={`${item.title} website preview`}
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 22vw"
+                  className="object-cover object-top transition-transform duration-500 ease-out group-hover/thumb:scale-[1.06]"
+                />
+              )}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent transition-opacity duration-300 group-hover/thumb:opacity-80" />
+              <span className="absolute inset-x-0 bottom-0 truncate p-2.5 font-mono text-[10px] uppercase tracking-wide text-white/90 sm:p-3">
+                {item.title}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
 /**
  * A GSAP ScrollTrigger horizontal-scroll gallery: the section pins itself,
- * and vertical scrolling drives horizontal movement across the featured
- * case-study panels until the pin releases. A progress rail tracks which
- * panel is active, and each panel's content reveals in sync with the
- * horizontal scrub via `containerAnimation` rather than just appearing.
+ * and vertical scrolling drives horizontal movement across the case-study
+ * panels until the pin releases. A progress rail tracks which panel is
+ * active, and each panel's content reveals in sync with the horizontal
+ * scrub via `containerAnimation` rather than just appearing.
  *
  * Below the `lg` breakpoint, and for prefers-reduced-motion, the pin/scrub
  * never activates at all — `gsap.matchMedia` skips creating it entirely
@@ -172,7 +213,7 @@ export default function CaseStudies() {
             pin: true,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
-              const idx = Math.min(featured.length - 1, Math.round(self.progress * (featured.length - 1)));
+              const idx = Math.min(totalPanels - 1, Math.round(self.progress * (totalPanels - 1)));
               dotsRef.current.forEach((dot, i) => {
                 if (!dot) return;
                 dot.classList.toggle("w-6", i === idx);
@@ -238,9 +279,9 @@ export default function CaseStudies() {
     >
       {/* Progress rail — mirrors which panel is currently pinned in view. */}
       <div className="pointer-events-none absolute right-6 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-end gap-2.5 lg:flex xl:right-10">
-        {featured.map((project, i) => (
+        {Array.from({ length: totalPanels }).map((_, i) => (
           <span
-            key={project.id}
+            key={i}
             ref={(el) => {
               dotsRef.current[i] = el;
             }}
@@ -252,53 +293,108 @@ export default function CaseStudies() {
       </div>
 
       <div ref={trackRef} className="flex flex-col lg:h-full lg:w-fit lg:flex-row">
-        {featured.map((project, i) => {
-          const meta = CASE_META[project.id] ?? { kind: "other" as const, badge: project.category, Icon: Layers };
-          const { Icon } = meta;
-          const image = getProjectImage(project);
+        <article
+          key={singleCase.id}
+          className="case-panel relative flex w-full shrink-0 flex-col justify-center overflow-hidden border-b border-border px-6 py-20 sm:px-10 sm:py-24 lg:h-full lg:w-screen lg:border-b-0 lg:border-l"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -top-6 right-4 select-none font-display text-[7rem] font-bold leading-none text-foreground/[0.035] sm:right-10 sm:text-[10rem] lg:text-[13rem]"
+          >
+            01
+          </span>
 
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.12]"
+            style={{
+              backgroundImage: `radial-gradient(circle at 15% 15%, ${singleCase.gradient[0]}, transparent 55%), radial-gradient(circle at 85% 85%, ${singleCase.gradient[1]}, transparent 55%)`,
+            }}
+          />
+
+          <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+            <div className="max-w-xl">
+              <div className="case-reveal">
+                <SectionLabel index="01" label="Case Study" />
+              </div>
+
+              <div className="case-reveal mt-6 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface/60 px-3.5 py-1.5">
+                <LayoutDashboard className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
+                <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">CRM, ERP &amp; B2B</span>
+              </div>
+
+              <h3 className="case-reveal mt-6 font-display text-[clamp(1.9rem,4.2vw,3.25rem)] font-medium leading-[1.05] tracking-tight text-foreground">
+                {singleCase.title}
+              </h3>
+              <p className="case-reveal mt-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
+                {singleCase.category} — {singleCase.period}
+              </p>
+
+              <p className="case-reveal mt-5 text-base leading-relaxed text-muted">{singleCase.description}</p>
+
+              <div className="case-reveal mt-7 flex flex-wrap gap-2">
+                {singleCase.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <div className="case-reveal mt-8">
+                <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
+                  <Lock className="h-4 w-4" />
+                  {singleCase.linkLabel}
+                </span>
+              </div>
+            </div>
+
+            <div className="case-reveal">
+              <CaseVisual kind="crm" gradient={singleCase.gradient} />
+            </div>
+          </div>
+        </article>
+
+        {categoryCases.map((item, i) => {
+          const panelIndex = i + 1;
           return (
             <article
-              key={project.id}
+              key={item.id}
               className="case-panel relative flex w-full shrink-0 flex-col justify-center overflow-hidden border-b border-border px-6 py-20 sm:px-10 sm:py-24 lg:h-full lg:w-screen lg:border-b-0 lg:border-l"
             >
               <span
                 aria-hidden
                 className="pointer-events-none absolute -top-6 right-4 select-none font-display text-[7rem] font-bold leading-none text-foreground/[0.035] sm:right-10 sm:text-[10rem] lg:text-[13rem]"
               >
-                0{i + 1}
+                0{panelIndex + 1}
               </span>
 
-              <div
-                aria-hidden
-                className="absolute inset-0 opacity-[0.12]"
-                style={{
-                  backgroundImage: `radial-gradient(circle at 15% 15%, ${project.gradient[0]}, transparent 55%), radial-gradient(circle at 85% 85%, ${project.gradient[1]}, transparent 55%)`,
-                }}
-              />
+              <div aria-hidden className="absolute inset-0 bg-grid opacity-[0.04]" />
 
               <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
                 <div className="max-w-xl">
                   <div className="case-reveal">
-                    <SectionLabel index={`0${i + 1}`} label="Case Study" />
+                    <SectionLabel index={`0${panelIndex + 1}`} label="Case Study" />
                   </div>
 
                   <div className="case-reveal mt-6 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface/60 px-3.5 py-1.5">
-                    <Icon className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">{meta.badge}</span>
+                    <item.Icon className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">{item.badge}</span>
                   </div>
 
                   <h3 className="case-reveal mt-6 font-display text-[clamp(1.9rem,4.2vw,3.25rem)] font-medium leading-[1.05] tracking-tight text-foreground">
-                    {project.title}
+                    {item.title}
                   </h3>
                   <p className="case-reveal mt-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
-                    {project.category} — {project.period}
+                    {item.category} — {item.period}
                   </p>
 
-                  <p className="case-reveal mt-5 text-base leading-relaxed text-muted">{project.description}</p>
+                  <p className="case-reveal mt-5 text-base leading-relaxed text-muted">{item.description}</p>
 
                   <div className="case-reveal mt-7 flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
+                    {item.tags.map((tag) => (
                       <span
                         key={tag}
                         className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
@@ -309,28 +405,19 @@ export default function CaseStudies() {
                   </div>
 
                   <div className="case-reveal mt-8">
-                    {project.href ? (
-                      <a
-                        href={project.href}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        data-cursor="link"
-                        className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-3 text-sm text-foreground transition-colors hover:border-accent-soft/60 hover:text-accent-soft"
-                      >
-                        {project.linkLabel ?? "View project"}
-                        <ArrowUpRight className="h-4 w-4" />
-                      </a>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
-                        <Lock className="h-4 w-4" />
-                        {project.linkLabel}
-                      </span>
-                    )}
+                    <a
+                      href="#work"
+                      data-cursor="link"
+                      className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-3 text-sm text-foreground transition-colors hover:border-accent-soft/60 hover:text-accent-soft"
+                    >
+                      {item.ctaLabel}
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
                   </div>
                 </div>
 
                 <div className="case-reveal">
-                  <CaseVisual kind={meta.kind} gradient={project.gradient} image={image} title={project.title} />
+                  <CategoryVisual projectIds={item.projectIds} chromeLabel={`${item.projectIds.length} live sites`} />
                 </div>
               </div>
             </article>

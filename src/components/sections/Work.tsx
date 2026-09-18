@@ -70,7 +70,7 @@ export default function Work() {
           })}
         </div>
 
-        <div className="mt-10 columns-1 gap-5 sm:columns-2 lg:columns-3">
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visibleWork.map((project) => (
             <ProjectCard
               key={project.id}

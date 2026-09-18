@@ -12,7 +12,7 @@ export const faqs = [
   {
     question: "Do you only do frontend, or can you handle full-stack work?",
     answer:
-      "Frontend is where I specialize and where I've built enterprise-scale experience, but I've shipped full-stack projects end to end (see Surpriso) and work closely with backend teams daily.",
+      "Frontend is where I specialize and where I've built enterprise-scale experience, but I've shipped full-stack projects end to end and work closely with backend teams daily.",
   },
   {
     question: "Can you build or customize a Shopify store?",

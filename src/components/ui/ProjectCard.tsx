@@ -57,7 +57,7 @@ export default function ProjectCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10% 0px" }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      className="group mb-5 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-border bg-surface/60 text-left transition-colors duration-300 hover:border-border-strong"
+      className="group block w-full overflow-hidden rounded-2xl border border-border bg-surface/60 text-left transition-colors duration-300 hover:border-border-strong"
     >
       <div
         className="relative w-full overflow-hidden"
@@ -88,6 +88,11 @@ export default function ProjectCard({
         )}
         {!image && <div className="absolute inset-0 bg-grid opacity-30" />}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/10" />
+        {/* Separate layer (not part of the gradient above) purely so the
+            hover-darken can use `background-color`, which CSS actually
+            transitions smoothly — swapping between two gradient utility
+            classes would just snap with no animation. */}
+        <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25" />
 
         <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-white/10 bg-black/25 px-4 py-2.5 backdrop-blur-sm">
           <TrafficLights />
@@ -95,10 +100,20 @@ export default function ProjectCard({
         </div>
 
         {!isFeatured && (
-          <div className="absolute inset-x-0 bottom-0 p-4">
-            <p className="font-display text-lg font-medium text-white drop-shadow-sm">
+          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-4">
+            <p className="font-display text-lg font-medium text-white drop-shadow-sm transition-transform duration-300 ease-out group-hover:-translate-y-0.5">
               {project.title}
             </p>
+            <div className="flex max-h-0 flex-wrap gap-1.5 overflow-hidden opacity-0 transition-all duration-300 ease-out group-hover:max-h-8 group-hover:opacity-100">
+              <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-white/90 backdrop-blur-sm">
+                {project.category}
+              </span>
+              {project.tags[0] && (
+                <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-white/90 backdrop-blur-sm">
+                  {project.tags[0]}
+                </span>
+              )}
+            </div>
           </div>
         )}
 
