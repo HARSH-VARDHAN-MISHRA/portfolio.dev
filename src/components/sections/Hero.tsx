@@ -10,7 +10,14 @@ import ParticleField from "@/components/ui/ParticleField";
 import HeroPortrait from "@/components/ui/HeroPortrait";
 import TypewriterText from "@/components/ui/TypewriterText";
 
-const BUILDS = ["CRM Platforms", "ERP Systems", "Shopify Stores", "WhatsApp Automation", "AI Workflows"] as const;
+const BUILDS = [
+  "CRM Platforms",
+  "ERP Systems",
+  "Shopify Stores",
+  "Razorpay Payments",
+  "WhatsApp Automation",
+  "AI Workflows",
+] as const;
 
 export default function Hero() {
   const { scrollY } = useScroll();

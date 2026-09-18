@@ -2,34 +2,35 @@
 
 import { useSyncExternalStore } from "react";
 import { motion } from "motion/react";
-import { Sparkles } from "lucide-react";
 import { techLogoMap } from "@/components/ui/TechLogos";
 import SectionLabel from "@/components/ui/SectionLabel";
 import RevealText from "@/components/ui/RevealText";
 import { site } from "@/data/site";
 
-type OrbitNode = { key: string; label: string } & (
-  | { kind: "logo"; slug: keyof typeof techLogoMap }
-  | { kind: "icon" }
-);
+type OrbitNode = { key: string; label: string; slug: keyof typeof techLogoMap };
 
 const innerRing: OrbitNode[] = [
-  { key: "react", kind: "logo", slug: "react", label: "React" },
-  { key: "nextdotjs", kind: "logo", slug: "nextdotjs", label: "Next.js" },
-  { key: "typescript", kind: "logo", slug: "typescript", label: "TypeScript" },
-  { key: "tailwindcss", kind: "logo", slug: "tailwindcss", label: "Tailwind CSS" },
+  { key: "react", slug: "react", label: "React" },
+  { key: "nextdotjs", slug: "nextdotjs", label: "Next.js" },
+  { key: "typescript", slug: "typescript", label: "TypeScript" },
+  { key: "tailwindcss", slug: "tailwindcss", label: "Tailwind CSS" },
 ];
 
+// Mirrors the resume's real stack — commerce/payments, logistics, and the AI
+// providers actually integrated, not a generic "AI APIs" placeholder.
 const outerRing: OrbitNode[] = [
-  { key: "nodedotjs", kind: "logo", slug: "nodedotjs", label: "Node.js" },
-  { key: "mongodb", kind: "logo", slug: "mongodb", label: "MongoDB" },
-  { key: "mysql", kind: "logo", slug: "mysql", label: "MySQL" },
-  { key: "django", kind: "logo", slug: "django", label: "Django" },
-  { key: "redux", kind: "logo", slug: "redux", label: "Redux" },
-  { key: "shopify", kind: "logo", slug: "shopify", label: "Shopify" },
-  { key: "ai", kind: "icon", label: "AI APIs" },
-  { key: "git", kind: "logo", slug: "git", label: "Git" },
-  { key: "github", kind: "logo", slug: "github", label: "GitHub" },
+  { key: "nodedotjs", slug: "nodedotjs", label: "Node.js" },
+  { key: "mongodb", slug: "mongodb", label: "MongoDB" },
+  { key: "mysql", slug: "mysql", label: "MySQL" },
+  { key: "django", slug: "django", label: "Django" },
+  { key: "redux", slug: "redux", label: "Redux" },
+  { key: "shopify", slug: "shopify", label: "Shopify" },
+  { key: "razorpay", slug: "razorpay", label: "Razorpay" },
+  { key: "openai", slug: "openai", label: "OpenAI" },
+  { key: "googlegemini", slug: "googlegemini", label: "Gemini" },
+  { key: "perplexity", slug: "perplexity", label: "Perplexity" },
+  { key: "git", slug: "git", label: "Git" },
+  { key: "github", slug: "github", label: "GitHub" },
 ];
 
 // Same `useSyncExternalStore` shape as CustomCursor's fine-pointer check —
@@ -74,6 +75,21 @@ function Ring({
   const strokeGradientId = `orbit-stroke-${ringId}`;
   const spokeGradientId = `orbit-spoke-${ringId}`;
 
+  // `Math.sin`/`Math.cos` aren't guaranteed bit-identical across JS engines
+  // (unlike +, -, *, /), so the server (Node) and client (browser) can land
+  // on a value that differs in the last decimal place — React then flags a
+  // hydration mismatch on these coordinates. Rounding to 4 decimals is far
+  // more precision than this diagram needs and reliably absorbs that ULP-
+  // level drift so both renders produce the exact same string.
+  const positions = nodes.map((node, i) => {
+    const angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
+    return {
+      node,
+      x: (50 + radius * Math.cos(angle)).toFixed(4),
+      y: (50 + radius * Math.sin(angle)).toFixed(4),
+    };
+  });
+
   return (
     <>
       {/* Thin gradient-stroke ring (SVG) in place of the old flat dashed
@@ -112,35 +128,21 @@ function Ring({
         {/* Spokes from the hub out to each node — drawn inside the same
             rotating layer so they travel with the nodes they connect to. */}
         <svg aria-hidden className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100">
-          {nodes.map((node, i) => {
-            const angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
-            const x = 50 + radius * Math.cos(angle);
-            const y = 50 + radius * Math.sin(angle);
-            return (
-              <line
-                key={node.key}
-                x1="50"
-                y1="50"
-                x2={x}
-                y2={y}
-                stroke={`url(#${spokeGradientId})`}
-                strokeWidth="0.3"
-              />
-            );
-          })}
+          {positions.map(({ node, x, y }) => (
+            <line
+              key={node.key}
+              x1="50"
+              y1="50"
+              x2={x}
+              y2={y}
+              stroke={`url(#${spokeGradientId})`}
+              strokeWidth="0.3"
+            />
+          ))}
         </svg>
 
-        {nodes.map((node, i) => {
-          const angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
-          const x = 50 + radius * Math.cos(angle);
-          const y = 50 + radius * Math.sin(angle);
-          const icon =
-            node.kind === "logo"
-              ? (() => {
-                  const Logo = techLogoMap[node.slug];
-                  return <Logo className="h-[45%] w-[45%]" />;
-                })()
-              : <Sparkles className="h-[45%] w-[45%] text-accent-2" strokeWidth={1.75} />;
+        {positions.map(({ node, x, y }, i) => {
+          const Logo = techLogoMap[node.slug];
 
           return (
             <div
@@ -161,7 +163,7 @@ function Ring({
                   transition={reduceMotion ? undefined : { duration, repeat: Infinity, ease: "linear" }}
                   whileHover={{ scale: 1.15 }}
                 >
-                  {icon}
+                  <Logo className="h-[45%] w-[45%]" />
 
                   <span className="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-border-strong bg-surface px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-muted-2 opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 sm:px-3 sm:text-[11px]">
                     {node.label}

@@ -22,7 +22,7 @@ type CaseKind = "crm" | "ecommerce" | "other";
  * from free-text category strings, which would be fragile to edits.
  */
 const CASE_META: Record<string, { kind: CaseKind; badge: string; Icon: LucideIcon }> = {
-  "partsklik-platform": { kind: "crm", badge: "CRM & ERP", Icon: LayoutDashboard },
+  "partsklik-platform": { kind: "crm", badge: "CRM, ERP & B2B", Icon: LayoutDashboard },
   surpriso: { kind: "ecommerce", badge: "E-Commerce", Icon: ShoppingBag },
   "dwarka-housing": { kind: "other", badge: "Real Estate Platform", Icon: Building2 },
 };
