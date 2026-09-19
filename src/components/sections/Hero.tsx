@@ -56,13 +56,13 @@ export default function Hero() {
             {site.status}
           </motion.div>
 
-          <h1 className="max-w-xl font-display text-[clamp(2.4rem,5.8vw,4.85rem)] font-medium leading-[1.05] tracking-tight text-foreground">
-            <RevealText text="I build the frontend" />
+          <h1 className="max-w-2xl font-display text-[clamp(2rem,4.6vw,3.85rem)] font-medium leading-[1.1] tracking-tight text-foreground">
+            <RevealText text="From CRM to checkout" />
             <br />
-            <RevealText text="that CRM systems and" delay={0.15} />
+            <RevealText text="to delivery —" delay={0.15} />
             <br />
             <span className="text-gradient">
-              <RevealText text="warehouses run on." delay={0.3} />
+              <RevealText text="I build the frontend businesses run on." delay={0.3} />
             </span>
           </h1>
 

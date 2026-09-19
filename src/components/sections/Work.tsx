@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "motion/react";
+import { Lock } from "lucide-react";
 import { projects, type Project } from "@/data/projects";
+import { site } from "@/data/site";
 import SectionLabel from "@/components/ui/SectionLabel";
 import RevealText from "@/components/ui/RevealText";
+import MagneticButton from "@/components/ui/MagneticButton";
 import ProjectCard, { type CardOrigin } from "@/components/ui/ProjectCard";
 import ProjectModal from "@/components/ui/ProjectModal";
 
@@ -78,6 +82,36 @@ export default function Work() {
               onOpen={(cardOrigin) => openProject(project, cardOrigin)}
             />
           ))}
+
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col justify-between gap-6 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-6 sm:col-span-2 sm:p-8 lg:col-span-3 lg:flex-row lg:items-center"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft/10 text-accent-soft">
+                <Lock className="h-5 w-5" strokeWidth={2} />
+              </div>
+              <div>
+                <p className="font-display text-lg font-medium text-foreground sm:text-xl">
+                  Most of my work is behind a login.
+                </p>
+                <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted">
+                  The bulk of what I build — CRM, ERP, warehouse & dispatch systems — runs privately
+                  for real businesses, so it never makes it to a public repo. Want to see it in
+                  detail? Call or email me and I&rsquo;ll walk you through it.
+                </p>
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-3 lg:pl-4">
+              <MagneticButton href="#contact">Get in touch</MagneticButton>
+              <MagneticButton href={`tel:${site.phoneHref}`} variant="ghost">
+                Call me
+              </MagneticButton>
+            </div>
+          </motion.div>
         </div>
       </div>
 

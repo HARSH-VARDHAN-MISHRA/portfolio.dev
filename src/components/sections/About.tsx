@@ -78,10 +78,10 @@ export default function About() {
         >
           I started by building small-business websites.
           <br />
-          3+ years later, I&rsquo;m shipping the{" "}
-          <span className="text-gradient">frontend for 4 enterprise CRM, ERP &amp; e-commerce</span> platforms
+          3+ years later, I own the{" "}
+          <span className="text-gradient">frontend across 4 enterprise CRM, ERP &amp; e-commerce</span> platforms
           <br />
-          — and I&rsquo;m back in school for my Master&rsquo;s.
+          — the systems real businesses run their operations on.
         </h2>
 
         <dl className="mt-16 grid grid-cols-1 gap-8 border-t border-border pt-10 sm:grid-cols-3">

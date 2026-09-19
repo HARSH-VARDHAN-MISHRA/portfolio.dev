@@ -57,6 +57,16 @@
   }
 }
 
+/* The Integrations logo strip reads as sluggish at mobile width, where the
+   tiles are smaller and there's less to look at per screen — pick up the
+   pace there without touching the Skills marquee, which shares the same
+   `animate-marquee` utility at its default speed. */
+@media (max-width: 639px) {
+  .marquee-integrations .animate-marquee {
+    animation-duration: 16s;
+  }
+}
+
 @keyframes grain {
   0%, 100% { transform: translate(0, 0); }
   10% { transform: translate(-1%, -3%); }

@@ -52,8 +52,8 @@ export default function Contact() {
           transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-muted"
         >
-          Currently building CRM systems at Partsklik LLP in Delhi — always open to a good
-          conversation about frontend, automation, or your next project.
+          Currently building CRM, e-commerce, and automation platforms at Partsklik LLP in Delhi —
+          always open to a good conversation about frontend, automation, or your next project.
         </motion.p>
 
         <motion.div

@@ -23,14 +23,14 @@ function LogoTile({ item }: { item: Integration }) {
     // bordered treatment scoped to `[data-theme="light"]` in globals.css.
     <div
       data-logo-tile
-      className="flex h-20 items-center justify-center rounded-2xl bg-white px-8 shadow-[0_12px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5 transition-transform duration-300 hover:-translate-y-0.5"
+      className="flex h-14 items-center justify-center rounded-2xl bg-white px-5 shadow-[0_12px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5 transition-transform duration-300 hover:-translate-y-0.5 sm:h-20 sm:px-8"
     >
       <Image
         src={item.logo}
         alt={item.name}
         width={item.width}
         height={item.height}
-        className="h-7 w-auto object-contain sm:h-8"
+        className="h-5 w-auto object-contain sm:h-8"
       />
     </div>
   );
@@ -60,8 +60,15 @@ export default function Integrations() {
       </div>
 
       <div className="relative mt-16 flex flex-col gap-6">
-        <Marquee items={rowA.map((item) => <LogoTile key={item.name} item={item} />)} />
-        <Marquee reverse items={rowB.map((item) => <LogoTile key={item.name} item={item} />)} />
+        <Marquee
+          className="marquee-integrations"
+          items={rowA.map((item) => <LogoTile key={item.name} item={item} />)}
+        />
+        <Marquee
+          reverse
+          className="marquee-integrations"
+          items={rowB.map((item) => <LogoTile key={item.name} item={item} />)}
+        />
       </div>
     </section>
   );
