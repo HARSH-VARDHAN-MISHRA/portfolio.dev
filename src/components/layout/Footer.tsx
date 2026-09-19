@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { site, socialLinks } from "@/data/site";
 
@@ -26,13 +27,13 @@ export default function Footer() {
             ))}
           </ul>
 
-          <a
-            href="#top"
+          <Link
+            href="/#top"
             data-cursor="link"
             className="link-underline flex w-fit items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-foreground"
           >
             Back to top <ArrowUp className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

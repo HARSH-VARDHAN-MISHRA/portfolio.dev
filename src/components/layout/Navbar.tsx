@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "motion/react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { navLinks, site, socialLinks } from "@/data/site";
@@ -127,10 +128,10 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-10">
-        <a href="#top" data-cursor="link" className="font-display text-lg font-semibold tracking-tight">
+        <Link href="/#top" data-cursor="link" className="font-display text-lg font-semibold tracking-tight">
           {site.initials}
           <span className="text-accent-2">.</span>
-        </a>
+        </Link>
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
