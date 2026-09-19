@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color system — deep cinematic near-black with a violet/cyan signal pair */
-  --color-background: #08080b;
-  --color-surface: #101014;
-  --color-surface-2: #17171d;
-  --color-border: #24242c;
-  --color-border-strong: #34343f;
-  --color-foreground: #f3f3f6;
-  --color-muted: #9a9aa8;
-  --color-muted-2: #63636f;
-  --color-accent: #6d5ef9;
-  --color-accent-soft: #8c7dff;
-  --color-accent-2: #22d3ee;
-  --color-warn: #f5b942;
+  /* Color system — neutral graphite base with a cobalt/sky signal pair */
+  --color-background: #0a0b0d;
+  --color-surface: #121316;
+  --color-surface-2: #191b1f;
+  --color-border: #262930;
+  --color-border-strong: #383c46;
+  --color-foreground: #f3f4f6;
+  --color-muted: #9a9ea8;
+  --color-muted-2: #63666f;
+  --color-accent: #2563eb;
+  --color-accent-soft: #3b82f6;
+  --color-accent-2: #0ea5e9;
+  --color-warn: #4338ca;
 
   /* Type system */
-  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
-  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-sans: var(--font-poppins), "Poppins", sans-serif;
   --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
 
   /* Motion easing tokens */
@@ -35,17 +35,17 @@
    built against bg-background/text-foreground/etc. just adapts. */
 :root[data-theme="light"] {
   --color-background: #ffffff;
-  --color-surface: #f5f5f7;
-  --color-surface-2: #ececef;
-  --color-border: #e2e2e6;
-  --color-border-strong: #d0d0d6;
-  --color-foreground: #1d1d1f;
-  --color-muted: #6e6e73;
-  --color-muted-2: #86868b;
-  --color-accent: #5646d6;
-  --color-accent-soft: #4f46e5;
-  --color-accent-2: #0891b2;
-  --color-warn: #b45309;
+  --color-surface: #f5f6f8;
+  --color-surface-2: #ecedf2;
+  --color-border: #e2e4e9;
+  --color-border-strong: #cfd2da;
+  --color-foreground: #14151a;
+  --color-muted: #62666f;
+  --color-muted-2: #8a8e97;
+  --color-accent: #1d4ed8;
+  --color-accent-soft: #2563eb;
+  --color-accent-2: #0369a1;
+  --color-warn: #3730a3;
 }
 
 @keyframes marquee {

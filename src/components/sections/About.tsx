@@ -1,103 +1,82 @@
 "use client";
 
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { useGSAP } from "@gsap/react";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { site } from "@/data/site";
 import SectionLabel from "@/components/ui/SectionLabel";
-
-gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
+import RevealText from "@/components/ui/RevealText";
 
 const facts = [
-  { label: "Based in", value: site.location },
-  { label: "Currently", value: "Frontend Developer @ Partsklik LLP" },
-  { label: "Studying", value: `${site.education.current.degree}, ${site.education.current.school}` },
+  site.location,
+  "Frontend Developer @ Partsklik LLP",
+  `${site.education.current.degree} (in progress)`,
 ];
 
 export default function About() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-
-  useGSAP(
-    () => {
-      if (!headingRef.current) return;
-
-      const mm = gsap.matchMedia();
-
-      /**
-       * The per-line mask reveal below only ever runs when motion is
-       * allowed. Under reduced motion this `mm.add` block simply never
-       * executes, so the heading is left exactly as authored: full-opacity,
-       * no split markup, no JS-driven state to get stuck mid-transition.
-       */
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        if (!headingRef.current) return;
-
-        // A SECOND SplitText call (e.g. `type: "words"`) on top of an
-        // already `mask: "lines"`-split element corrupts the existing line
-        // structure — every word ends up back-detected as its own separate
-        // "line" (confirmed empirically). So this stays a single split —
-        // one clean per-line reveal, rather than layering a second
-        // scroll-scrubbed color pass on top that fought the reveal's own
-        // timing and read as janky/half-finished.
-        const lineSplit = new SplitText(headingRef.current, { type: "lines", mask: "lines" });
-
-        gsap.from(lineSplit.lines, {
-          yPercent: 115,
-          opacity: 0,
-          filter: "blur(10px)",
-          duration: 1.1,
-          ease: "power4.out",
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-            once: true,
-          },
-        });
-
-        return () => lineSplit.revert();
-      });
-
-      return () => mm.revert();
-    },
-    { scope: sectionRef }
-  );
-
   return (
-    <section id="about" ref={sectionRef} className="relative border-t border-border py-28 sm:py-36">
+    <section id="about" className="relative border-t border-border py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <SectionLabel index="01" label="About" />
 
-        <h2
-          ref={headingRef}
-          className="mt-10 max-w-3xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground"
-        >
-          I started by building small-business websites.
-          <br />
-          3+ years later, I own the{" "}
-          <span className="text-gradient">frontend across 4 enterprise CRM, ERP &amp; e-commerce</span> platforms
-          <br />
-          — the systems real businesses run their operations on.
-        </h2>
+        <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
+          <div>
+            <h2 className="max-w-xl font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-foreground">
+              <RevealText text="I don’t just build screens." />
+              <br />
+              <RevealText text="I build" delay={0.15} />
+              <br />
+              <span className="text-gradient">
+                <RevealText text="the systems behind them." delay={0.3} />
+              </span>
+            </h2>
 
-        <dl className="mt-16 grid grid-cols-1 gap-8 border-t border-border pt-10 sm:grid-cols-3">
-          {facts.map((fact, i) => (
-            <motion.div
-              key={fact.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.08 }}
-            >
-              <dt className="font-mono text-xs uppercase tracking-[0.15em] text-muted-2">{fact.label}</dt>
-              <dd className="mt-2 text-lg text-foreground">{fact.value}</dd>
-            </motion.div>
-          ))}
-        </dl>
+            <p className="mt-8 max-w-xl text-base leading-relaxed text-muted">
+              I&rsquo;m the frontend engineer behind Partsklik&rsquo;s CRM/ERP suite — the order
+              pipelines, the warehouse &amp; dispatch dashboards, the Shopify and Razorpay checkouts,
+              and the WhatsApp and OCR automation that let AI models act directly inside the system.
+            </p>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted">
+              Most of what I ship never has a public URL. It&rsquo;s the layer the business actually
+              runs through, which suits me fine — correctness and uptime get judged here, not just
+              pixels.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-6 font-mono text-xs text-muted-2">
+              {facts.map((fact, i) => (
+                <span key={fact} className="flex items-center gap-3">
+                  {i > 0 && <span className="text-border-strong">·</span>}
+                  {fact}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mx-auto w-full max-w-[420px] lg:mx-0 lg:max-w-none"
+          >
+            <div
+              aria-hidden
+              className="absolute -inset-8 -z-10 rounded-full bg-[radial-gradient(circle,var(--color-accent),var(--color-accent-2)_55%,transparent_75%)] opacity-25 blur-3xl"
+            />
+            <Image
+              src={site.portraitSrc}
+              alt="Portrait of Harshvardhan Mishra"
+              width={760}
+              height={748}
+              sizes="(max-width: 1024px) 60vw, 40vw"
+              draggable={false}
+              className="relative z-10 h-auto w-full select-none"
+              style={{
+                maskImage: "linear-gradient(to bottom, black 82%, transparent 99%)",
+                WebkitMaskImage: "linear-gradient(to bottom, black 82%, transparent 99%)",
+              }}
+            />
+          </motion.div>
+        </div>
       </div>
     </section>
   );

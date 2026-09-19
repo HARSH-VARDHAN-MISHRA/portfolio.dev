@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Fraunces, Poppins, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { site } from "@/data/site";
@@ -10,16 +10,16 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import Preloader from "@/components/ui/Preloader";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
-const spaceGrotesk = Space_Grotesk({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-fraunces",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-poppins",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
@@ -143,7 +143,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // (to avoid a flash of the wrong theme), which will always differ from
       // the server's markup — that mismatch is expected here, not a bug.
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${fraunces.variable} ${poppins.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <Script id="theme-init" strategy="beforeInteractive">

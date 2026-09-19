@@ -29,21 +29,41 @@ export default function GsapMaskReveal({ children, as: Tag = "div", className }:
       if (!ref.current) return;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      const split = new SplitText(ref.current, { type: "lines", mask: "lines" });
-      gsap.from(split.lines, {
-        yPercent: 110,
-        opacity: 0,
-        duration: 1,
-        ease: "power4.out",
-        stagger: 0.09,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 85%",
-          once: true,
-        },
+      let split: SplitText | undefined;
+      let cancelled = false;
+
+      // Splitting before the display font finishes loading measures line
+      // breaks against the fallback font's metrics, which can make
+      // SplitText detect one word per "line" instead of the real wrapped
+      // lines. document.fonts.ready alone isn't quite enough — it can
+      // resolve a tick before the browser has actually repainted with the
+      // swapped-in font, so two nested rAFs give layout a full frame to
+      // settle first.
+      document.fonts.ready.then(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (cancelled || !ref.current) return;
+            split = new SplitText(ref.current, { type: "lines", mask: "lines" });
+            gsap.from(split.lines, {
+              yPercent: 110,
+              opacity: 0,
+              duration: 1,
+              ease: "power4.out",
+              stagger: 0.09,
+              scrollTrigger: {
+                trigger: ref.current,
+                start: "top 85%",
+                once: true,
+              },
+            });
+          });
+        });
       });
 
-      return () => split.revert();
+      return () => {
+        cancelled = true;
+        split?.revert();
+      };
     },
     { scope: ref }
   );

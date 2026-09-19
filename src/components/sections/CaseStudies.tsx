@@ -1,16 +1,11 @@
 "use client";
 
-import { useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
+import { motion } from "motion/react";
 import { Lock, ArrowRight, LayoutDashboard, ShoppingBag, Layers, type LucideIcon } from "lucide-react";
 import { projects, getProjectImage, type Project } from "@/data/projects";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { TrafficLights } from "@/components/ui/ProjectCard";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 // Only the Partsklik platform suite is a real single-project deep-dive —
 // it's the one entry that's still `variant: "featured"`. The other two
@@ -71,8 +66,6 @@ const categoryCases: CategoryCase[] = [
     ctaLabel: "Browse business sites",
   },
 ];
-
-const totalPanels = 1 + categoryCases.length;
 
 /**
  * Product visual for the single deep-dive case study — a browser-chrome
@@ -176,254 +169,136 @@ function CategoryVisual({ projectIds, chromeLabel }: { projectIds: string[]; chr
   );
 }
 
-/**
- * A GSAP ScrollTrigger horizontal-scroll gallery: the section pins itself,
- * and vertical scrolling drives horizontal movement across the case-study
- * panels until the pin releases. A progress rail tracks which panel is
- * active, and each panel's content reveals in sync with the horizontal
- * scrub via `containerAnimation` rather than just appearing.
- *
- * Below the `lg` breakpoint, and for prefers-reduced-motion, the pin/scrub
- * never activates at all — `gsap.matchMedia` skips creating it entirely
- * rather than just disabling it — so mobile gets a plain vertical stack of
- * cards with its own (much lighter) reveal-on-scroll.
- */
+const revealProps = {
+  initial: { opacity: 0, y: 32 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-10% 0px" },
+  transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
+};
+
 export default function CaseStudies() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const dotsRef = useRef<Array<HTMLSpanElement | null>>([]);
-
-  useGSAP(
-    () => {
-      const track = trackRef.current;
-      if (!track) return;
-
-      const panels = gsap.utils.toArray<HTMLElement>(".case-panel", track);
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-        const tween = gsap.to(track, {
-          x: () => -(track.scrollWidth - window.innerWidth),
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: () => `+=${track.scrollWidth - window.innerWidth}`,
-            scrub: 1,
-            pin: true,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const idx = Math.min(totalPanels - 1, Math.round(self.progress * (totalPanels - 1)));
-              dotsRef.current.forEach((dot, i) => {
-                if (!dot) return;
-                dot.classList.toggle("w-6", i === idx);
-                dot.classList.toggle("bg-foreground", i === idx);
-                dot.classList.toggle("w-2", i !== idx);
-                dot.classList.toggle("bg-border-strong", i !== idx);
-              });
-            },
-          },
-        });
-
-        panels.forEach((panel) => {
-          gsap.fromTo(
-            panel.querySelectorAll(".case-reveal"),
-            { opacity: 0, y: 32 },
-            {
-              opacity: 1,
-              y: 0,
-              stagger: 0.06,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: panel,
-                containerAnimation: tween,
-                start: "left 75%",
-                end: "left 35%",
-                scrub: true,
-              },
-            }
-          );
-        });
-      });
-
-      mm.add("(max-width: 1023px) and (prefers-reduced-motion: no-preference)", () => {
-        panels.forEach((panel) => {
-          gsap.fromTo(
-            panel.querySelectorAll(".case-reveal"),
-            { opacity: 0, y: 24 },
-            {
-              opacity: 1,
-              y: 0,
-              stagger: 0.06,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: panel,
-                start: "top 82%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-        });
-      });
-
-      return () => mm.revert();
-    },
-    { scope: sectionRef }
-  );
-
   return (
-    <section
-      id="case-studies"
-      ref={sectionRef}
-      className="relative overflow-hidden border-t border-border bg-background lg:h-screen"
-    >
-      {/* Progress rail — mirrors which panel is currently pinned in view. */}
-      <div className="pointer-events-none absolute right-6 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-end gap-2.5 lg:flex xl:right-10">
-        {Array.from({ length: totalPanels }).map((_, i) => (
-          <span
-            key={i}
-            ref={(el) => {
-              dotsRef.current[i] = el;
-            }}
-            className={`h-2 rounded-full bg-border-strong transition-[width,background-color] duration-300 ${
-              i === 0 ? "w-6 bg-foreground" : "w-2"
-            }`}
-          />
-        ))}
-      </div>
-
-      <div ref={trackRef} className="flex flex-col lg:h-full lg:w-fit lg:flex-row">
-        <article
-          key={singleCase.id}
-          className="case-panel relative flex w-full shrink-0 flex-col justify-center overflow-hidden border-b border-border px-6 py-20 sm:px-10 sm:py-24 lg:h-full lg:w-screen lg:border-b-0 lg:border-l"
+    <section id="case-studies" className="relative overflow-hidden border-t border-border bg-background">
+      <motion.article {...revealProps} className="relative flex flex-col overflow-hidden border-b border-border px-6 py-20 sm:px-10 sm:py-24">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -top-6 right-4 select-none font-display text-[7rem] font-bold leading-none text-foreground/[0.035] sm:right-10 sm:text-[10rem] lg:text-[13rem]"
         >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute -top-6 right-4 select-none font-display text-[7rem] font-bold leading-none text-foreground/[0.035] sm:right-10 sm:text-[10rem] lg:text-[13rem]"
-          >
-            01
-          </span>
+          01
+        </span>
 
-          <div
-            aria-hidden
-            className="absolute inset-0 opacity-[0.12]"
-            style={{
-              backgroundImage: `radial-gradient(circle at 15% 15%, ${singleCase.gradient[0]}, transparent 55%), radial-gradient(circle at 85% 85%, ${singleCase.gradient[1]}, transparent 55%)`,
-            }}
-          />
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 15% 15%, ${singleCase.gradient[0]}, transparent 55%), radial-gradient(circle at 85% 85%, ${singleCase.gradient[1]}, transparent 55%)`,
+          }}
+        />
 
-          <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
-            <div className="max-w-xl">
-              <div className="case-reveal">
-                <SectionLabel index="01" label="Case Study" />
-              </div>
+        <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+          <div className="max-w-xl">
+            <SectionLabel index="01" label="Case Study" />
 
-              <div className="case-reveal mt-6 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface/60 px-3.5 py-1.5">
-                <LayoutDashboard className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">CRM, ERP &amp; B2B</span>
-              </div>
-
-              <h3 className="case-reveal mt-6 font-display text-[clamp(1.9rem,4.2vw,3.25rem)] font-medium leading-[1.05] tracking-tight text-foreground">
-                {singleCase.title}
-              </h3>
-              <p className="case-reveal mt-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
-                {singleCase.category} — {singleCase.period}
-              </p>
-
-              <p className="case-reveal mt-5 text-base leading-relaxed text-muted">{singleCase.description}</p>
-
-              <div className="case-reveal mt-7 flex flex-wrap gap-2">
-                {singleCase.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="case-reveal mt-8">
-                <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
-                  <Lock className="h-4 w-4" />
-                  {singleCase.linkLabel}
-                </span>
-              </div>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface/60 px-3.5 py-1.5">
+              <LayoutDashboard className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
+              <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">CRM, ERP &amp; B2B</span>
             </div>
 
-            <div className="case-reveal">
-              <CaseVisual kind="crm" gradient={singleCase.gradient} />
+            <h3 className="mt-6 font-display text-[clamp(1.9rem,4.2vw,3.25rem)] font-medium leading-[1.05] tracking-tight text-foreground">
+              {singleCase.title}
+            </h3>
+            <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
+              {singleCase.category} — {singleCase.period}
+            </p>
+
+            <p className="mt-5 text-base leading-relaxed text-muted">{singleCase.description}</p>
+
+            <div className="mt-7 flex flex-wrap gap-2">
+              {singleCase.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-8">
+              <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
+                <Lock className="h-4 w-4" />
+                {singleCase.linkLabel}
+              </span>
             </div>
           </div>
-        </article>
 
-        {categoryCases.map((item, i) => {
-          const panelIndex = i + 1;
-          return (
-            <article
-              key={item.id}
-              className="case-panel relative flex w-full shrink-0 flex-col justify-center overflow-hidden border-b border-border px-6 py-20 sm:px-10 sm:py-24 lg:h-full lg:w-screen lg:border-b-0 lg:border-l"
+          <CaseVisual kind="crm" gradient={singleCase.gradient} />
+        </div>
+      </motion.article>
+
+      {categoryCases.map((item, i) => {
+        const panelIndex = i + 1;
+        return (
+          <motion.article
+            key={item.id}
+            {...revealProps}
+            className="relative flex flex-col overflow-hidden border-b border-border px-6 py-20 last:border-none sm:px-10 sm:py-24"
+          >
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -top-6 right-4 select-none font-display text-[7rem] font-bold leading-none text-foreground/[0.035] sm:right-10 sm:text-[10rem] lg:text-[13rem]"
             >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute -top-6 right-4 select-none font-display text-[7rem] font-bold leading-none text-foreground/[0.035] sm:right-10 sm:text-[10rem] lg:text-[13rem]"
-              >
-                0{panelIndex + 1}
-              </span>
+              0{panelIndex + 1}
+            </span>
 
-              <div aria-hidden className="absolute inset-0 bg-grid opacity-[0.04]" />
+            <div aria-hidden className="absolute inset-0 bg-grid opacity-[0.04]" />
 
-              <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
-                <div className="max-w-xl">
-                  <div className="case-reveal">
-                    <SectionLabel index={`0${panelIndex + 1}`} label="Case Study" />
-                  </div>
+            <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+              <div className="max-w-xl">
+                <SectionLabel index={`0${panelIndex + 1}`} label="Case Study" />
 
-                  <div className="case-reveal mt-6 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface/60 px-3.5 py-1.5">
-                    <item.Icon className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">{item.badge}</span>
-                  </div>
-
-                  <h3 className="case-reveal mt-6 font-display text-[clamp(1.9rem,4.2vw,3.25rem)] font-medium leading-[1.05] tracking-tight text-foreground">
-                    {item.title}
-                  </h3>
-                  <p className="case-reveal mt-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
-                    {item.category} — {item.period}
-                  </p>
-
-                  <p className="case-reveal mt-5 text-base leading-relaxed text-muted">{item.description}</p>
-
-                  <div className="case-reveal mt-7 flex flex-wrap gap-2">
-                    {item.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="case-reveal mt-8">
-                    <a
-                      href="#work"
-                      data-cursor="link"
-                      className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-3 text-sm text-foreground transition-colors hover:border-accent-soft/60 hover:text-accent-soft"
-                    >
-                      {item.ctaLabel}
-                      <ArrowRight className="h-4 w-4" />
-                    </a>
-                  </div>
+                <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface/60 px-3.5 py-1.5">
+                  <item.Icon className="h-3.5 w-3.5 text-accent-2" strokeWidth={2} />
+                  <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted">{item.badge}</span>
                 </div>
 
-                <div className="case-reveal">
-                  <CategoryVisual projectIds={item.projectIds} chromeLabel={`${item.projectIds.length} live sites`} />
+                <h3 className="mt-6 font-display text-[clamp(1.9rem,4.2vw,3.25rem)] font-medium leading-[1.05] tracking-tight text-foreground">
+                  {item.title}
+                </h3>
+                <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-2">
+                  {item.category} — {item.period}
+                </p>
+
+                <p className="mt-5 text-base leading-relaxed text-muted">{item.description}</p>
+
+                <div className="mt-7 flex flex-wrap gap-2">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-border px-3 py-1 font-mono text-[11px] tracking-wide text-muted-2"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-8">
+                  <a
+                    href="#work"
+                    data-cursor="link"
+                    className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-3 text-sm text-foreground transition-colors hover:border-accent-soft/60 hover:text-accent-soft"
+                  >
+                    {item.ctaLabel}
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
                 </div>
               </div>
-            </article>
-          );
-        })}
-      </div>
+
+              <CategoryVisual projectIds={item.projectIds} chromeLabel={`${item.projectIds.length} live sites`} />
+            </div>
+          </motion.article>
+        );
+      })}
     </section>
   );
 }
