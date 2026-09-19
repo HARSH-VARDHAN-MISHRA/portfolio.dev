@@ -31,14 +31,18 @@ export default function About() {
             </h2>
 
             <p className="mt-8 max-w-xl text-base leading-relaxed text-muted">
-              I&rsquo;m the frontend engineer behind Partsklik&rsquo;s CRM/ERP suite — the order
-              pipelines, the warehouse &amp; dispatch dashboards, the Shopify and Razorpay checkouts,
-              and the WhatsApp and OCR automation that let AI models act directly inside the system.
+              I&rsquo;m the <strong className="font-semibold text-foreground">frontend engineer</strong>{" "}
+              behind Partsklik&rsquo;s <strong className="font-semibold text-foreground">CRM/ERP suite</strong>{" "}
+              — the order pipelines, the warehouse &amp; dispatch dashboards, the Shopify and Razorpay
+              checkouts, and the{" "}
+              <strong className="font-semibold text-foreground">WhatsApp and OCR automation</strong> that
+              let AI models act directly inside the system.
             </p>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted">
               Most of what I ship never has a public URL. It&rsquo;s the layer the business actually
-              runs through, which suits me fine — correctness and uptime get judged here, not just
-              pixels.
+              runs through, which suits me fine —{" "}
+              <strong className="font-semibold text-foreground">correctness and uptime</strong> get judged
+              here, not just pixels.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-6 font-mono text-xs text-muted-2">

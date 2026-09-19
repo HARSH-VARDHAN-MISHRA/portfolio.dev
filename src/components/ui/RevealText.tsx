@@ -35,7 +35,14 @@ export default function RevealText({
             className="inline-block"
             initial={{ y: "110%" }}
             whileInView={{ y: "0%" }}
-            viewport={{ once, margin: "-10% 0px" }}
+            // No negative margin here (unlike most other reveal components on
+            // the site) — this text sits right at the top of the page inside
+            // Hero, and shrinking the detection zone made it possible to
+            // scroll past it fast enough (e.g. jumping straight to the
+            // bottom of the page and back) that the intersection was never
+            // registered, leaving these words stuck invisible forever since
+            // `once` never got to fire.
+            viewport={{ once }}
             transition={{
               duration: 0.9,
               ease: [0.16, 1, 0.3, 1],

@@ -28,15 +28,21 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-grid"
+      className="relative flex min-h-[100svh] flex-col justify-between bg-grid"
     >
-      <motion.div style={{ y: auroraY }} className="absolute inset-0">
-        <GradientAurora />
-      </motion.div>
-      <motion.div style={{ y: particleY }} className="absolute inset-0">
-        <ParticleField className="opacity-70" />
-      </motion.div>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+      {/* Decorative layers get their own overflow-hidden wrapper — clipping
+          the section itself instead would also clip real content (the CTA
+          row, in particular) whenever it's taller than the viewport on
+          shorter screens, pushing it out of view with no way to scroll to it. */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <motion.div style={{ y: auroraY }} className="absolute inset-0">
+          <GradientAurora />
+        </motion.div>
+        <motion.div style={{ y: particleY }} className="absolute inset-0">
+          <ParticleField className="opacity-70" />
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+      </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-6 pt-32 text-center sm:px-10 lg:pt-20">
         <motion.div
