@@ -7,15 +7,19 @@ import { site } from "@/data/site";
 
 gsap.registerPlugin(useGSAP);
 
+const BAR_COUNT = 12;
+const LOAD_DURATION = 2.1;
+
 /**
- * A straightforward loading screen: a counting percentage, a filling bar,
- * then a single curtain wipes up to reveal the page. No hidden meaning to
- * decode — it's clear what's happening and when it's done.
+ * A radial "chasing pulse" loader — 12 bars arranged like clock ticks, each
+ * lighting up in sequence around the ring so the pulse appears to travel in
+ * a loop. Same flow as the familiar Netflix spinner, rebuilt from scratch
+ * with this site's own accent color rather than reusing any of their brand
+ * assets. A single curtain wipes up to reveal the page once it's done.
  */
 export default function Preloader() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const counterRef = useRef<HTMLSpanElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
+  const barsRef = useRef<Array<HTMLSpanElement | null>>([]);
   const [done, setDone] = useState(false);
 
   useGSAP(
@@ -25,26 +29,26 @@ export default function Preloader() {
         return;
       }
 
-      const counter = { value: 0 };
-      gsap.timeline({
-        defaults: { ease: "power2.out" },
-        onComplete: () => {
-          gsap.to(containerRef.current, {
-            yPercent: -100,
-            duration: 0.9,
-            ease: "power4.inOut",
-            delay: 0.2,
-            onComplete: () => setDone(true),
-          });
+      gsap.to(barsRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        ease: "power2.inOut",
+        repeat: -1,
+        yoyo: true,
+        stagger: {
+          each: 0.08,
+          from: 0,
         },
-      }).to(counter, {
-        value: 100,
-        duration: 1.8,
-        onUpdate: () => {
-          const v = Math.round(counter.value);
-          if (counterRef.current) counterRef.current.textContent = String(v);
-          if (barRef.current) barRef.current.style.width = `${v}%`;
-        },
+      });
+
+      gsap.delayedCall(LOAD_DURATION, () => {
+        gsap.to(containerRef.current, {
+          yPercent: -100,
+          duration: 0.9,
+          ease: "power4.inOut",
+          onComplete: () => setDone(true),
+        });
       });
     },
     { scope: containerRef }
@@ -64,16 +68,23 @@ export default function Preloader() {
       ref={containerRef}
       className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background"
     >
-      <div className="flex items-start font-display text-foreground">
-        <span ref={counterRef} className="text-[clamp(3.5rem,14vw,8rem)] font-medium leading-none tabular-nums">
-          0
-        </span>
-        <span className="mt-2 text-xl text-muted sm:mt-3 sm:text-2xl">%</span>
+      <div className="relative h-16 w-16">
+        {Array.from({ length: BAR_COUNT }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute inset-0"
+            style={{ transform: `rotate(${(i * 360) / BAR_COUNT}deg)` }}
+          >
+            <span
+              ref={(el) => {
+                barsRef.current[i] = el;
+              }}
+              className="absolute left-1/2 top-0 h-[22%] w-[9%] -translate-x-1/2 scale-50 rounded-full bg-accent opacity-20"
+            />
+          </span>
+        ))}
       </div>
-      <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-muted-2">{site.name}</p>
-      <div className="mt-8 h-px w-40 overflow-hidden bg-border">
-        <div ref={barRef} className="h-full bg-gradient-to-r from-accent to-accent-2" style={{ width: "0%" }} />
-      </div>
+      <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-muted-2">{site.name}</p>
     </div>
   );
 }
