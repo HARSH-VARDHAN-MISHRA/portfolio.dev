@@ -48,4 +48,10 @@ export const education: EducationEntry[] = [
     school: "IGNOU University, Delhi",
     status: "Completed",
   },
+  // {
+  //   period: "2022 — 2023",
+  //   degree: "Full Stack Development (Python)",
+  //   school: "Ducat, Pitampura",
+  //   status: "Completed",
+  // },
 ];
